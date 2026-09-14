@@ -88,9 +88,6 @@ export const AuthModal: React.FC<AuthModalProps> = ({ onSuccess }) => {
       const res = await api.sendOtp(email.trim().toLowerCase());
       if (res.emailDelivery === 'delivered') {
         setSuccessMsg(`Verification code sent to ${email.trim()}! Please check your inbox (and spam folder).`);
-      } else if (res.devOtpCode) {
-        setOtpCode(res.devOtpCode);
-        setSuccessMsg(`Verification code ready: ${res.devOtpCode} (Email queued via SMTP)`);
       } else {
         setSuccessMsg(`Verification code sent to ${email.trim()}! Please check your email inbox.`);
       }

@@ -95,81 +95,33 @@ async function request<T>(endpoint: string, options: RequestInit = {}): Promise<
 export const api = {
   // Auth
   async sendOtp(email: string) {
-    try {
-      const res = await request<{
-        success: boolean;
-        message: string;
-        emailDelivery: string;
-        emailDeliveryError?: string | null;
-        devOtpCode?: string | null;
-        resendCooldown: number;
-      }>('/api/auth/send-otp', {
-        method: 'POST',
-        body: JSON.stringify({ email }),
-      });
-      return res;
-    } catch (err: any) {
-      // If server returns rate limit 429 or 400 bad email, respect it
-      if (err.status === 429 || (err.status === 400 && err.data?.error)) {
-        throw err;
-      }
-
-      // Seamless fallback for static hosting/preview without live server
-      const devOtpCode = '123456';
-      simulatedOtpMap[email.toLowerCase()] = devOtpCode;
-      return {
-        success: true,
-        message: 'Verification code ready: 123456',
-        emailDelivery: 'direct_preview',
-        emailDeliveryError: null,
-        devOtpCode,
-        resendCooldown: 15,
-      };
-    }
+    const res = await request<{
+      success: boolean;
+      message: string;
+      emailDelivery: string;
+      emailDeliveryError?: string | null;
+      resendCooldown: number;
+    }>('/api/auth/send-otp', {
+      method: 'POST',
+      body: JSON.stringify({ email }),
+    });
+    return res;
   },
 
   async verifyOtp(email: string, code: string) {
-    try {
-      const res = await request<{
-        success: boolean;
-        verified: boolean;
-        email: string;
-        isExistingUser: boolean;
-        message: string;
-        token?: string | null;
-        user?: User | null;
-      }>('/api/auth/verify-otp', {
-        method: 'POST',
-        body: JSON.stringify({ email, code }),
-      });
-      return res;
-    } catch (err: any) {
-      // If error is invalid code 400, throw so user can retry
-      if (err.status === 400 && err.data?.error && !err.message?.includes('404')) {
-        throw err;
-      }
-
-      // Safe local verification fallback
-      const stored = getStoredUser();
-      const isExisting = Boolean(stored && stored.email.toLowerCase() === email.toLowerCase());
-      const token = `preview_token_${Date.now()}`;
-      
-      let user: User | null = null;
-      if (isExisting && stored) {
-        user = stored;
-        setAuthToken(token);
-      }
-
-      return {
-        success: true,
-        verified: true,
-        email,
-        isExistingUser: isExisting,
-        message: 'Code verified successfully',
-        token: user ? token : null,
-        user,
-      };
-    }
+    const res = await request<{
+      success: boolean;
+      verified: boolean;
+      email: string;
+      isExistingUser: boolean;
+      message: string;
+      token?: string | null;
+      user?: User | null;
+    }>('/api/auth/verify-otp', {
+      method: 'POST',
+      body: JSON.stringify({ email, code }),
+    });
+    return res;
   },
 
   async register(payload: {
@@ -681,9 +633,10 @@ export const api = {
         { method: 'POST' }
       );
     } catch (err: any) {
+      const errorMsg = err?.data?.error || err?.message || 'Failed to dispatch test email via SMTP server.';
       return {
-        success: true,
-        message: 'SMTP Test Diagnostic: Verified connection to smtp.gmail.com:587',
+        success: false,
+        message: errorMsg,
       };
     }
   },
@@ -695,9 +648,10 @@ export const api = {
         { method: 'POST' }
       );
     } catch (err: any) {
+      const errorMsg = err?.data?.error || err?.message || 'Failed to dispatch morning digest email via SMTP server.';
       return {
-        success: true,
-        message: 'Morning summary email queued for delivery',
+        success: false,
+        message: errorMsg,
       };
     }
   },
