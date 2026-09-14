@@ -1,0 +1,48 @@
+{
+  "entities": {
+    "User": {
+      "collection": "users",
+      "fields": {
+        "email": { "type": "string" },
+        "name": { "type": "string" },
+        "timezone": { "type": "string" },
+        "createdAt": { "type": "string" },
+        "updatedAt": { "type": "string" },
+        "theme": { "type": "string" }
+      }
+    },
+    "UserSettings": {
+      "collection": "users/{userId}/settings",
+      "fields": {
+        "timezone": { "type": "string" },
+        "emailNotificationsEnabled": { "type": "boolean" },
+        "taskCompletionEmail": { "type": "boolean" },
+        "scheduledRemindersEmail": { "type": "boolean" },
+        "morningDigestEmail": { "type": "boolean" },
+        "morningDigestTime": { "type": "string" },
+        "missedTaskEmail": { "type": "boolean" },
+        "updatedAt": { "type": "string" }
+      }
+    },
+    "Todo": {
+      "collection": "users/{userId}/todos",
+      "fields": {
+        "title": { "type": "string" },
+        "description": { "type": "string" },
+        "dueDate": { "type": "string" },
+        "dueTime": { "type": "string", "optional": true },
+        "reminderMinutesBefore": { "type": "number", "optional": true },
+        "reminderScheduledTime": { "type": "string", "optional": true },
+        "reminderSent": { "type": "boolean" },
+        "completed": { "type": "boolean" },
+        "completedAt": { "type": "string", "optional": true },
+        "completionEmailSent": { "type": "boolean" },
+        "missedTaskEmailSent": { "type": "boolean" },
+        "priority": { "type": "string" },
+        "category": { "type": "string" },
+        "createdAt": { "type": "string" },
+        "updatedAt": { "type": "string" }
+      }
+    }
+  }
+}
