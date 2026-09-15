@@ -23,11 +23,12 @@ import {
 import { api } from '../lib/api.ts';
 import { User, UserSettings, NotificationLog } from '../types.ts';
 import { exportProductivityHistoryToCsv } from '../lib/exportCsv.ts';
-import { isSpecialUser } from '../lib/userTheme.ts';
+import { isSpecialUser, isRohitUser, isNavyaUser } from '../lib/userTheme.ts';
 import {
   WashiTape,
   HeartDoodle,
   SparkleDoodle,
+  FlowerDoodle,
   PencilIllustration,
 } from './PlannerDoodles.tsx';
 
@@ -37,7 +38,8 @@ interface SettingsViewProps {
 }
 
 export const SettingsView: React.FC<SettingsViewProps> = ({ user, onUserUpdated }) => {
-  const isSpecial = isSpecialUser(user.email);
+  const isRohit = isRohitUser(user.email);
+  const isStationery = !isRohit; // Pink cute art stationery theme for Navya Sri & default
 
   const [settings, setSettings] = useState<UserSettings | null>(null);
   const [smtpStatus, setSmtpStatus] = useState<{
@@ -152,7 +154,7 @@ export const SettingsView: React.FC<SettingsViewProps> = ({ user, onUserUpdated 
 
       setSettings(res.settings);
       onUserUpdated({ ...user, timezone });
-      setSaveMessage(isSpecial ? 'Preferences and schedule saved with love! ♡' : 'Preferences and SMTP settings saved successfully!');
+      setSaveMessage(isStationery ? 'Preferences and schedule saved with love! ♡' : 'Preferences and SMTP settings saved successfully!');
       setTimeout(() => setSaveMessage(null), 4000);
     } catch (err: any) {
       setErrorMessage(err.message || 'Failed to save settings.');
@@ -239,7 +241,7 @@ export const SettingsView: React.FC<SettingsViewProps> = ({ user, onUserUpdated 
   }
 
   /* SPECIAL STATIONERY & HANDWRITTEN THEME */
-  if (isSpecial) {
+  if (isStationery) {
     return (
       <div id="settings-view" className="space-y-6 max-w-4xl">
         {/* Cute Header */}

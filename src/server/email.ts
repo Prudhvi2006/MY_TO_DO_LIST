@@ -859,6 +859,102 @@ export async function sendWelcomeCoverLetterEmail(
   });
 }
 
+export async function sendPasswordResetEmail(
+  email: string,
+  otpCode: string,
+  customConfig?: SmtpConfig
+) {
+  const subject = `🔑 Password Reset Code: ${otpCode} • ToDo List Account Recovery`;
+  const html = `
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>${escapeHtml(subject)}</title>
+</head>
+<body style="margin: 0; padding: 0; background-color: #f8fafc; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; color: #334155; line-height: 1.6;">
+
+  <table width="100%" cellpadding="0" cellspacing="0" border="0" style="background-color: #f8fafc; padding: 32px 16px;">
+    <tr>
+      <td align="center">
+        <!-- Main Card Container -->
+        <table width="100%" max-width="560" cellpadding="0" cellspacing="0" border="0" style="max-width: 560px; width: 100%; background-color: #ffffff; border-radius: 20px; border: 1px solid #e2e8f0; overflow: hidden; box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05);">
+          
+          <!-- Header -->
+          <tr>
+            <td style="padding: 32px 28px 24px 28px; background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%); border-bottom: 1px solid #bfdbfe; text-align: center;">
+              
+              <div style="display: inline-block; padding: 6px 14px; border-radius: 9999px; background-color: #ffffff; border: 1px solid #93c5fd; color: #1d4ed8; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 1.2px; margin-bottom: 12px;">
+                🔒 SECURITY &amp; RECOVERY
+              </div>
+
+              <h1 style="margin: 0 0 8px 0; color: #1e3a8a; font-size: 24px; font-weight: 800; line-height: 1.2;">
+                Reset Your Password
+              </h1>
+              <p style="margin: 0 auto; max-width: 440px; color: #3b82f6; font-size: 13px; line-height: 1.5;">
+                We received a request to reset the password for your ToDo List productivity account. Use the verification code below to set a new password.
+              </p>
+            </td>
+          </tr>
+
+          <!-- Main Body: Code Card -->
+          <tr>
+            <td style="padding: 32px 28px;">
+              
+              <div style="background-color: #f1f5f9; border-radius: 16px; padding: 24px 20px; border: 2px dashed #94a3b8; text-align: center; margin-bottom: 24px;">
+                
+                <div style="font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 1.5px; color: #64748b; margin-bottom: 8px;">
+                  YOUR 6-DIGIT RESET CODE
+                </div>
+
+                <div style="font-size: 38px; font-weight: 900; font-family: monospace; letter-spacing: 8px; color: #0f172a; margin: 8px 0;">
+                  ${otpCode}
+                </div>
+
+                <div style="font-size: 12px; color: #64748b; margin-top: 6px;">
+                  ⏳ Valid for 15 minutes • Do not share this code with anyone
+                </div>
+              </div>
+
+              <div style="background-color: #fef2f2; border: 1px solid #fecaca; border-radius: 12px; padding: 14px 16px; margin-bottom: 20px;">
+                <p style="margin: 0; font-size: 12px; color: #991b1b; line-height: 1.5;">
+                  <strong>Didn't request a password reset?</strong> If you did not make this request, you can safely ignore this email. Your current password will remain unchanged and your account is secure.
+                </p>
+              </div>
+
+            </td>
+          </tr>
+
+          <!-- Footer -->
+          <tr>
+            <td style="padding: 20px 28px; background-color: #f8fafc; border-top: 1px solid #e2e8f0; text-align: center;">
+              <p style="margin: 0 0 4px 0; font-size: 11px; color: #64748b;">
+                Sent directly to <strong style="color: #334155;">${escapeHtml(email)}</strong>
+              </p>
+              <p style="margin: 0; font-size: 11px; color: #94a3b8;">
+                © 2026 ToDo List • Productivity Workspace System
+              </p>
+            </td>
+          </tr>
+
+        </table>
+      </td>
+    </tr>
+  </table>
+</body>
+</html>
+  `;
+
+  return await sendEmailDirect({
+    type: 'password_reset_otp',
+    recipientEmail: email,
+    subject,
+    html,
+    customConfig,
+  });
+}
+
 function escapeHtml(str: string): string {
   return str.replace(/[&<>'"]/g, (tag) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' }[tag] || tag));
 }

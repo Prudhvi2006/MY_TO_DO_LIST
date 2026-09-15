@@ -10,6 +10,8 @@ import {
   handleVerifyOtp,
   handleRegister,
   handleLogin,
+  handleForgotPassword,
+  handleResetPassword,
   handleFirebaseLogin,
   handleGetMe,
   handleConfirmWelcomeEmail,
@@ -56,6 +58,8 @@ export function createApiApp(): Express {
   app.post('/api/auth/verify-otp', handleVerifyOtp);
   app.post('/api/auth/register', handleRegister);
   app.post('/api/auth/login', handleLogin);
+  app.post('/api/auth/forgot-password', handleForgotPassword);
+  app.post('/api/auth/reset-password', handleResetPassword);
   app.post('/api/auth/firebase-login', handleFirebaseLogin);
   app.get('/api/auth/me', requireAuth, handleGetMe);
   app.post('/api/auth/confirm-welcome-email', requireAuth, handleConfirmWelcomeEmail);

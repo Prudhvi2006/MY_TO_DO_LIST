@@ -20,11 +20,12 @@ import {
   Sparkles,
 } from 'lucide-react';
 import { AnalyticsData, ProductivityGraphData } from '../types.ts';
-import { isSpecialUser } from '../lib/userTheme.ts';
+import { isRohitUser, isNavyaUser, isSpecialUser } from '../lib/userTheme.ts';
 import {
   WashiTape,
   HeartDoodle,
   SparkleDoodle,
+  FlowerDoodle,
   PencilIllustration,
 } from './PlannerDoodles.tsx';
 
@@ -38,7 +39,8 @@ const MODERN_COLORS = ['#2563eb', '#10b981', '#f59e0b', '#8b5cf6', '#ec4899', '#
 const CUTE_COLORS = ['#f43f5e', '#a855f7', '#38bdf8', '#34d399', '#f59e0b', '#ec4899'];
 
 export const AnalyticsView: React.FC<AnalyticsViewProps> = ({ analytics, graphData, userEmail }) => {
-  const isSpecial = isSpecialUser(userEmail);
+  const isRohit = isRohitUser(userEmail);
+  const isStationery = !isRohit; // Navya Sri and default users get Cute Pastel Pink Stationery theme
 
   const totalPlanned = analytics?.totalPlanned ?? 0;
   const totalCompleted = analytics?.totalCompleted ?? 0;
@@ -68,7 +70,7 @@ export const AnalyticsView: React.FC<AnalyticsViewProps> = ({ analytics, graphDa
     : [];
 
   /* SPECIAL STATIONERY & HANDWRITTEN THEME */
-  if (isSpecial) {
+  if (isStationery) {
     return (
       <div id="analytics-view" className="space-y-6">
         {/* Cute Header Card */}

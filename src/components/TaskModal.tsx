@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { X, Calendar, Clock, Bell, AlertCircle, Tag, Flag, Sparkles, CheckCircle2, RefreshCw, Check } from 'lucide-react';
 import { Todo } from '../types.ts';
-import { isSpecialUser } from '../lib/userTheme.ts';
-import { WashiTape, HeartDoodle, SparkleDoodle } from './PlannerDoodles.tsx';
+import { isRohitUser, isNavyaUser } from '../lib/userTheme.ts';
+import { WashiTape, HeartDoodle, SparkleDoodle, FlowerDoodle, BowDoodle } from './PlannerDoodles.tsx';
 import { CricketBallDoodle, CricketBatDoodle, Number45Sticker } from './CricketDoodles.tsx';
 
 interface TaskModalProps {
@@ -30,7 +30,7 @@ export const TaskModal: React.FC<TaskModalProps> = ({
   defaultDate,
   userEmail,
 }) => {
-  const isSpecial = isSpecialUser(userEmail);
+  const isRohit = isRohitUser(userEmail);
 
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
@@ -98,7 +98,7 @@ export const TaskModal: React.FC<TaskModalProps> = ({
   };
 
   /* SPECIAL ROHIT SHARMA FAN SCRAPBOOK THEME */
-  if (isSpecial) {
+  if (isRohit) {
     return (
       <div
         id="task-modal-backdrop"
@@ -305,36 +305,44 @@ export const TaskModal: React.FC<TaskModalProps> = ({
     );
   }
 
-  /* NORMAL CLEAN MODERN THEME */
+  /* CUTE PASTEL PINK STATIONERY SCRAPBOOK THEME (NAVYA SRI / DEFAULT) */
   return (
     <div
       id="task-modal-backdrop"
-      className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/50 backdrop-blur-sm p-4 overflow-y-auto"
+      className="fixed inset-0 z-50 flex items-center justify-center bg-rose-950/40 backdrop-blur-sm p-4 overflow-y-auto"
     >
       <div
         id="task-modal-container"
-        className="relative w-full max-w-lg bg-white/95 backdrop-blur-xl rounded-3xl p-6 sm:p-7 text-slate-900 shadow-2xl border border-white/80 z-10 my-8"
+        className="relative w-full max-w-lg bg-[#FFFDF7] rounded-[28px] p-6 sm:p-7 text-[#881337] shadow-2xl border-2 border-[#fbcfe8] z-10 my-8 overflow-hidden space-y-4"
       >
-        {/* Clean Modal Header */}
-        <div className="flex items-start justify-between border-b border-slate-100 pb-4 mb-5">
+        {/* Decorative Washi Tape */}
+        <div className="absolute -top-1.5 left-10 z-10">
+          <WashiTape color="pink" angle={-2} className="w-24 h-4.5" />
+        </div>
+        <div className="absolute -top-1.5 right-12 z-10 hidden sm:block">
+          <WashiTape color="yellow" angle={3} className="w-20 h-4" />
+        </div>
+
+        {/* Header */}
+        <div className="flex items-start justify-between border-b-2 border-dashed border-[#fbcfe8] pb-3.5 mb-2 pt-1">
           <div>
             <div className="flex items-center gap-2">
-              <div className="w-8 h-8 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center">
-                <Sparkles className="w-4 h-4" />
-              </div>
-              <h2 className="text-lg font-bold text-slate-900">
-                {initialData ? 'Edit Task' : 'Create New Task'}
+              <FlowerDoodle className="w-5 h-5 text-[#f43f5e]" />
+              <h2 className="text-xl sm:text-2xl font-handwriting font-bold text-[#881337] flex items-center gap-2">
+                <span>{initialData ? 'Edit Task ♡' : 'New Task ♡'}</span>
+                <HeartDoodle className="w-4 h-4 text-[#f43f5e]" color="#f43f5e" />
               </h2>
             </div>
-            <p className="text-xs text-slate-500 mt-1">
-              Add actionable deadlines and optional email reminders
+            <p className="text-xs font-handwriting font-semibold text-[#e11d48] mt-0.5 flex items-center gap-1">
+              <span>Write your plans with love — take small steps and smile bright ♡</span>
+              <SparkleDoodle className="w-3 h-3 text-[#f59e0b]" color="#f59e0b" />
             </p>
           </div>
           <button
             id="close-task-modal-btn"
             type="button"
             onClick={onClose}
-            className="p-1.5 text-slate-400 hover:text-slate-700 hover:bg-slate-100 rounded-xl transition-colors cursor-pointer"
+            className="p-1.5 text-[#fda4af] hover:text-[#e11d48] hover:bg-[#fff1f2] rounded-xl transition-colors cursor-pointer"
             title="Close"
           >
             <X className="w-5 h-5" />
@@ -343,15 +351,15 @@ export const TaskModal: React.FC<TaskModalProps> = ({
 
         <form onSubmit={handleSubmit} className="space-y-4">
           {error && (
-            <div className="flex items-center gap-2 p-3 text-xs text-red-700 bg-red-50 border border-red-200 rounded-xl">
-              <AlertCircle className="w-4 h-4 shrink-0 text-red-500" />
+            <div className="flex items-center gap-2 p-3 text-xs font-handwriting font-bold text-rose-800 bg-rose-50 border border-rose-200 rounded-xl">
+              <AlertCircle className="w-4 h-4 shrink-0 text-rose-500" />
               <span>{error}</span>
             </div>
           )}
 
-          {/* TASK TITLE */}
-          <div className="space-y-1.5">
-            <label className="block text-xs font-semibold uppercase tracking-wider text-slate-600">
+          {/* Task Title */}
+          <div className="space-y-1">
+            <label className="block text-xs font-handwriting font-bold uppercase tracking-wider text-[#881337]">
               Task Title *
             </label>
             <input
@@ -359,54 +367,54 @@ export const TaskModal: React.FC<TaskModalProps> = ({
               type="text"
               value={title}
               onChange={(e) => setTitle(e.target.value)}
-              placeholder="e.g. Complete project proposal"
-              className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 focus:bg-white text-sm font-medium transition-all"
+              placeholder="e.g. Read favorite book, complete work notes ♡"
+              className="w-full px-4 py-2.5 bg-white border-2 border-[#fbcfe8] rounded-2xl text-[#881337] placeholder:text-[#fda4af] focus:outline-none focus:border-[#f43f5e] text-sm font-handwriting font-bold transition-all"
               autoFocus
               required
             />
           </div>
 
           {/* Description */}
-          <div>
-            <label className="block text-xs font-semibold uppercase tracking-wider text-slate-600 mb-1.5">
-              Description (Optional)
+          <div className="space-y-1">
+            <label className="block text-xs font-handwriting font-bold uppercase tracking-wider text-[#881337]">
+              Notes / Sub-points (Optional)
             </label>
             <textarea
               id="task-desc-input"
               value={description}
               onChange={(e) => setDescription(e.target.value)}
-              placeholder="Add relevant notes or details..."
+              placeholder="Add your cute thoughts, study goals, or reminder details..."
               rows={2}
-              className="w-full px-3.5 py-2 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 focus:bg-white text-sm resize-none transition-all"
+              className="w-full px-4 py-2 bg-white border-2 border-[#fbcfe8] rounded-2xl text-[#881337] placeholder:text-[#fda4af] focus:outline-none focus:border-[#f43f5e] text-sm font-handwriting font-semibold resize-none transition-all"
             />
           </div>
 
           {/* Date & Time */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div>
-              <label className="flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wider text-slate-600 mb-1.5">
-                <Calendar className="w-3.5 h-3.5 text-blue-600" /> Due Date *
+              <label className="flex items-center gap-1.5 text-xs font-handwriting font-bold uppercase tracking-wider text-[#881337] mb-1">
+                <Calendar className="w-3.5 h-3.5 text-[#f43f5e]" /> Due Date *
               </label>
               <input
                 id="task-duedate-input"
                 type="date"
                 value={dueDate}
                 onChange={(e) => setDueDate(e.target.value)}
-                className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 focus:bg-white"
+                className="w-full px-3 py-2 bg-white border-2 border-[#fbcfe8] rounded-2xl text-[#881337] text-sm font-handwriting font-bold focus:outline-none focus:border-[#f43f5e]"
                 required
               />
             </div>
 
             <div>
-              <label className="flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wider text-slate-600 mb-1.5">
-                <Clock className="w-3.5 h-3.5 text-blue-600" /> Due Time
+              <label className="flex items-center gap-1.5 text-xs font-handwriting font-bold uppercase tracking-wider text-[#881337] mb-1">
+                <Clock className="w-3.5 h-3.5 text-[#f43f5e]" /> Due Time
               </label>
               <input
                 id="task-duetime-input"
                 type="time"
                 value={dueTime}
                 onChange={(e) => setDueTime(e.target.value)}
-                className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 focus:bg-white"
+                className="w-full px-3 py-2 bg-white border-2 border-[#fbcfe8] rounded-2xl text-[#881337] text-sm font-handwriting font-bold focus:outline-none focus:border-[#f43f5e]"
               />
             </div>
           </div>
@@ -414,8 +422,8 @@ export const TaskModal: React.FC<TaskModalProps> = ({
           {/* Reminder & Priority */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div>
-              <label className="flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wider text-slate-600 mb-1.5">
-                <Bell className="w-3.5 h-3.5 text-blue-600" /> Email Reminder
+              <label className="flex items-center gap-1.5 text-xs font-handwriting font-bold uppercase tracking-wider text-[#881337] mb-1">
+                <Bell className="w-3.5 h-3.5 text-[#f43f5e]" /> Email Reminder 💌
               </label>
               <select
                 id="task-reminder-select"
@@ -423,7 +431,7 @@ export const TaskModal: React.FC<TaskModalProps> = ({
                 onChange={(e) =>
                   setReminderMinutesBefore(e.target.value === 'none' ? null : Number(e.target.value))
                 }
-                className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 cursor-pointer"
+                className="w-full px-3 py-2 bg-white border-2 border-[#fbcfe8] rounded-2xl text-[#881337] text-sm font-handwriting font-bold focus:outline-none focus:border-[#f43f5e] cursor-pointer"
               >
                 <option value="none">No reminder</option>
                 <option value="15">15 minutes before</option>
@@ -435,37 +443,37 @@ export const TaskModal: React.FC<TaskModalProps> = ({
             </div>
 
             <div>
-              <label className="flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wider text-slate-600 mb-1.5">
-                <Flag className="w-3.5 h-3.5 text-blue-600" /> Priority
+              <label className="flex items-center gap-1.5 text-xs font-handwriting font-bold uppercase tracking-wider text-[#881337] mb-1">
+                <Flag className="w-3.5 h-3.5 text-[#f43f5e]" /> Priority
               </label>
               <select
                 id="task-priority-select"
                 value={priority}
                 onChange={(e) => setPriority(e.target.value as 'low' | 'medium' | 'high')}
-                className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 cursor-pointer"
+                className="w-full px-3 py-2 bg-white border-2 border-[#fbcfe8] rounded-2xl text-[#881337] text-sm font-handwriting font-bold focus:outline-none focus:border-[#f43f5e] cursor-pointer"
               >
-                <option value="low">Low Priority</option>
-                <option value="medium">Medium Priority</option>
-                <option value="high">High Priority</option>
+                <option value="low">Standard Task 🌸</option>
+                <option value="medium">Important Goal ⭐</option>
+                <option value="high">Top Priority 🔥</option>
               </select>
             </div>
           </div>
 
           {/* Category Pills */}
           <div>
-            <label className="flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wider text-slate-600 mb-2">
-              <Tag className="w-3.5 h-3.5 text-blue-600" /> Category
+            <label className="flex items-center gap-1.5 text-xs font-handwriting font-bold uppercase tracking-wider text-[#881337] mb-2">
+              <Tag className="w-3.5 h-3.5 text-[#f43f5e]" /> Category
             </label>
             <div className="flex gap-2 flex-wrap">
-              {['Work', 'Personal', 'Study', 'Health', 'Finance', 'General'].map((cat) => (
+              {['Work', 'Personal', 'Study', 'Self-Care', 'Health', 'General'].map((cat) => (
                 <button
                   key={cat}
                   type="button"
                   onClick={() => setCategory(cat)}
-                  className={`px-3 py-1.5 text-xs font-semibold rounded-xl border transition-all cursor-pointer ${
+                  className={`px-3 py-1.5 text-xs font-handwriting font-bold rounded-2xl border-2 transition-all cursor-pointer ${
                     category === cat
-                      ? 'bg-blue-50 border-blue-300 text-blue-700 shadow-xs'
-                      : 'bg-slate-50 border-slate-200 text-slate-600 hover:bg-slate-100'
+                      ? 'bg-[#f43f5e] border-[#be123c] text-white shadow-xs scale-105'
+                      : 'bg-white border-[#fbcfe8] text-[#881337] hover:bg-[#fff1f2]'
                   }`}
                 >
                   {cat}
@@ -475,12 +483,12 @@ export const TaskModal: React.FC<TaskModalProps> = ({
           </div>
 
           {/* Modal Actions */}
-          <div className="flex items-center justify-end gap-2.5 pt-4 border-t border-slate-100 mt-5">
+          <div className="flex items-center justify-end gap-2.5 pt-4 border-t-2 border-dashed border-[#fbcfe8] mt-4">
             <button
               id="cancel-task-btn"
               type="button"
               onClick={onClose}
-              className="px-4 py-2 text-xs font-semibold text-slate-600 hover:text-slate-900 hover:bg-slate-100 rounded-xl transition-colors cursor-pointer"
+              className="px-4 py-2 text-xs font-handwriting font-bold text-[#881337] hover:bg-[#fff1f2] rounded-xl transition-colors cursor-pointer"
             >
               Cancel
             </button>
@@ -488,7 +496,7 @@ export const TaskModal: React.FC<TaskModalProps> = ({
               id="submit-task-btn"
               type="submit"
               disabled={isSubmitting}
-              className="px-5 py-2.5 text-xs font-bold text-white bg-blue-600 hover:bg-blue-700 active:bg-blue-800 disabled:opacity-50 rounded-xl shadow-md shadow-blue-500/20 transition-all flex items-center gap-1.5 cursor-pointer"
+              className="px-6 py-2.5 text-xs font-handwriting font-bold text-white bg-linear-to-r from-[#f43f5e] to-[#e11d48] hover:from-[#e11d48] hover:to-[#be123c] disabled:opacity-50 rounded-2xl shadow-md shadow-rose-400/30 border border-[#be123c] transition-all flex items-center gap-1.5 cursor-pointer"
             >
               {isSubmitting ? (
                 <>
@@ -497,7 +505,7 @@ export const TaskModal: React.FC<TaskModalProps> = ({
               ) : (
                 <>
                   <Check className="w-3.5 h-3.5" />
-                  {initialData ? 'Save Changes' : 'Create Task'}
+                  {initialData ? 'Save Changes ♡ ✨' : 'Add Task ♡ 🌸'}
                 </>
               )}
             </button>
@@ -507,3 +515,4 @@ export const TaskModal: React.FC<TaskModalProps> = ({
     </div>
   );
 };
+

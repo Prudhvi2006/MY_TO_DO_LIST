@@ -110,3 +110,15 @@ export interface NotificationLog {
   errorMessage?: string | null;
   createdAt: string;
 }
+
+export interface Habit {
+  id: string;
+  userId?: number;
+  title: string;
+  category: string;
+  icon?: string;
+  color?: string;
+  targetDaysPerWeek: number;
+  completedDates: string[]; // YYYY-MM-DD format
+  createdAt: string;
+}

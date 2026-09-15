@@ -15,7 +15,6 @@ import {
 } from 'lucide-react';
 import { Todo } from '../types.ts';
 import { checkTaskTimeCompleted } from '../lib/timeUtils.ts';
-import { isSpecialUser } from '../lib/userTheme.ts';
 import {
   CalendarDoodle,
   HeartDoodle,
@@ -33,7 +32,21 @@ import {
   Number45Sticker,
   BlueHeartDoodle,
   RisingSunDoodle,
+  AnimatedHitmanPullShot,
+  AnimatedCricketBall,
+  AnimatedCricketBat,
+  AnimatedSixerBadge,
+  AnimatedHitmanCap,
+  AnimatedJersey45Badge,
+  AnimatedHitmanCrown,
+  AnimatedHitmanTrophy,
+  HitmanCardMiniBadge,
+  HitmanCardEmojiRow,
+  RealRohitSticker,
+  CardStickerBadge,
+  MainCardStickers,
 } from './CricketDoodles.tsx';
+import { isSpecialUser, isRohitUser } from '../lib/userTheme.ts';
 
 interface WeeklyPlannerProps {
   todos: Todo[];
@@ -55,6 +68,7 @@ export const WeeklyPlanner: React.FC<WeeklyPlannerProps> = ({
   onFocusTask,
 }) => {
   const isSpecial = isSpecialUser(userEmail);
+  const isRohit = isRohitUser(userEmail);
 
   // Current week offset (0 = current week, 1 = next week, -1 = previous week)
   const [weekOffset, setWeekOffset] = useState(0);
@@ -81,6 +95,14 @@ export const WeeklyPlanner: React.FC<WeeklyPlannerProps> = ({
     });
   }, [todos, historyQuery, historyFilter]);
 
+  // Format local YYYY-MM-DD
+  const formatLocalDate = (d: Date): string => {
+    const year = d.getFullYear();
+    const month = String(d.getMonth() + 1).padStart(2, '0');
+    const day = String(d.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
+  };
+
   // Compute Monday date for the selected week
   const getMonday = (offsetWeeks = 0): Date => {
     const now = new Date();
@@ -94,13 +116,31 @@ export const WeeklyPlanner: React.FC<WeeklyPlannerProps> = ({
   };
 
   const mondayDate = getMonday(weekOffset);
+  const sundayDate = new Date(mondayDate);
+  sundayDate.setDate(mondayDate.getDate() + 6);
+
+  const todayDate = new Date();
+  const todayStr = formatLocalDate(todayDate);
+  const liveTodayFormatted = todayDate.toLocaleDateString('en-US', {
+    weekday: 'short',
+    month: 'short',
+    day: 'numeric',
+  });
+
+  const weekRangeFormatted = `${mondayDate.toLocaleDateString('en-US', {
+    month: 'short',
+    day: 'numeric',
+  })} – ${sundayDate.toLocaleDateString('en-US', {
+    month: 'short',
+    day: 'numeric',
+    year: 'numeric',
+  })}`;
 
   // Generate 7 days (Monday to Sunday)
   const days = Array.from({ length: 7 }, (_, i) => {
     const d = new Date(mondayDate);
     d.setDate(mondayDate.getDate() + i);
-    const dateStr = d.toISOString().split('T')[0];
-    const todayStr = new Date().toISOString().split('T')[0];
+    const dateStr = formatLocalDate(d);
     return {
       date: dateStr,
       dayName: d.toLocaleDateString('en-US', { weekday: 'short' }),
@@ -140,9 +180,12 @@ export const WeeklyPlanner: React.FC<WeeklyPlannerProps> = ({
 
   return (
     <div id="weekly-planner-view" className="space-y-6">
-      {/* Header Card: Stationery vs Modern Normal */}
-      {isSpecial ? (
+      {/* Header Card: Hitman for Rohit vs Cute Pastel Stationery for Navya Sri */}
+      {isRohit ? (
         <div className="relative bg-[#FFFDF7] rounded-[28px] p-6 sm:p-7 border-2 border-[#8EC5FF] shadow-[0_8px_30px_rgba(8,43,99,0.1)] space-y-6 overflow-hidden">
+          {/* Real Rohit Die-Cut Stickers (2 on Main Schedule Card) */}
+          <MainCardStickers leftPose="trophy" rightPose="pull_shot" size={70} />
+
           {/* Decorative washi tapes */}
           <div className="absolute -top-1.5 left-10 z-10">
             <WashiTape color="blue" angle={-3} className="w-24 h-5" />
@@ -151,7 +194,7 @@ export const WeeklyPlanner: React.FC<WeeklyPlannerProps> = ({
             <WashiTape color="yellow" angle={4} className="w-20 h-4" />
           </div>
 
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-5 pt-2">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-5 pt-2 relative z-10">
             <div className="space-y-1">
               <div className="flex items-center gap-3">
                 <CrownDoodle className="w-8 h-8 text-[#F4C95D] shrink-0" />
@@ -174,37 +217,255 @@ export const WeeklyPlanner: React.FC<WeeklyPlannerProps> = ({
                   setActiveViewMode('planner');
                   setHistoryQuery('');
                 }}
-                className={`px-3.5 py-1.5 rounded-xl text-xs sm:text-sm font-handwriting font-bold transition-all cursor-pointer flex items-center gap-1.5 ${
+                className={`px-3.5 py-1.5 rounded-xl text-xs sm:text-sm font-handwriting font-bold transition-all cursor-pointer flex items-center gap-1.5 whitespace-nowrap ${
                   activeViewMode === 'planner' && !historyQuery.trim()
                     ? 'bg-white text-[#082B63] shadow-xs border border-[#8EC5FF]'
                     : 'text-[#1769E0] hover:text-[#082B63] hover:bg-white/50'
                 }`}
               >
-                <CricketBatDoodle className="w-3.5 h-3.5" />
+                <CricketBatDoodle className="w-3.5 h-3.5 shrink-0" />
                 <span>Weekly Grid</span>
               </button>
               <button
                 onClick={() => setActiveViewMode('history')}
-                className={`px-3.5 py-1.5 rounded-xl text-xs sm:text-sm font-handwriting font-bold transition-all cursor-pointer flex items-center gap-1.5 ${
+                className={`px-3.5 py-1.5 rounded-xl text-xs sm:text-sm font-handwriting font-bold transition-all cursor-pointer flex items-center gap-1.5 whitespace-nowrap ${
                   activeViewMode === 'history' || historyQuery.trim()
                     ? 'bg-white text-[#082B63] shadow-xs border border-[#8EC5FF]'
                     : 'text-[#1769E0] hover:text-[#082B63] hover:bg-white/50'
                 }`}
               >
-                <History className="w-3.5 h-3.5 text-[#1769E0]" />
+                <History className="w-3.5 h-3.5 text-[#1769E0] shrink-0" />
                 <span>Innings History ({todos.length})</span>
               </button>
             </div>
           </div>
 
           {/* Motivational Quote Banner */}
-          <div className="flex items-center justify-between gap-2 p-3 bg-white/80 border border-[#8EC5FF] rounded-xl text-xs font-handwriting">
-            <div className="flex items-center gap-2 text-[#082B63] font-bold">
+          <div className="relative flex items-center justify-between gap-2 p-3 bg-white/80 border border-[#8EC5FF] rounded-xl text-xs font-handwriting overflow-hidden">
+            {/* 2 Stickers on Motivational Note */}
+            <MainCardStickers leftPose="wave" rightPose="jersey_45_back" size={50} />
+
+            <div className="flex items-center gap-2 text-[#082B63] font-bold relative z-10">
               <RisingSunDoodle className="w-4 h-4" />
               <span>SUN WILL RAISE AGAIN — Smile every body smile :)</span>
             </div>
-            <div className="text-[11px] font-bold text-[#1769E0] hidden md:block">
+            <div className="text-[11px] font-bold text-[#1769E0] hidden md:block relative z-10">
               "Small Steps. Big Innings." 💙
+            </div>
+          </div>
+
+          {/* Handwritten Style History Search & Filter Bar */}
+          <div className="w-full space-y-2.5 pt-1">
+            <div className="relative flex items-center w-full">
+              <div className="absolute left-3.5 pointer-events-none text-rose-400">
+                <Search className="w-4 h-4" />
+              </div>
+              <input
+                id="history-search-input"
+                type="text"
+                value={historyQuery}
+                onChange={(e) => {
+                  const val = e.target.value;
+                  setHistoryQuery(val);
+                  if (val.trim()) {
+                    setActiveViewMode('history');
+                  }
+                }}
+                placeholder="Find history tasks (title, date, tag)..."
+                className="w-full bg-[#fffdfa] hover:bg-white focus:bg-white text-[#082B63] placeholder:text-[#8EC5FF] text-sm font-medium pl-10 pr-26 py-2.5 sm:py-3 rounded-2xl border-2 border-[#8EC5FF] focus:border-[#1769E0] focus:ring-4 focus:ring-blue-100 transition-all outline-none shadow-2xs font-cute text-base"
+              />
+              <div className="absolute right-2.5 flex items-center gap-1.5">
+                {historyQuery && (
+                  <button
+                    onClick={() => setHistoryQuery('')}
+                    className="p-1.5 text-[#1769E0] hover:text-[#082B63] rounded-lg transition-colors cursor-pointer"
+                    title="Clear search"
+                  >
+                    <X className="w-3.5 h-3.5" />
+                  </button>
+                )}
+                <button
+                  onClick={() => setShowFilterDropdown((prev) => !prev)}
+                  className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-handwriting font-bold transition-all cursor-pointer border ${
+                    showFilterDropdown || historyFilter !== 'all'
+                      ? 'bg-[#1769E0] border-[#082B63] text-white shadow-xs'
+                      : 'bg-[#EAF4FF] hover:bg-[#D8ECFF] border-[#8EC5FF] text-[#082B63]'
+                  }`}
+                  title="Toggle filters"
+                >
+                  <Filter className="w-3 h-3" />
+                  <span>Filter</span>
+                  {historyFilter !== 'all' && (
+                    <span className="w-1.5 h-1.5 rounded-full bg-white animate-ping" />
+                  )}
+                </button>
+              </div>
+            </div>
+
+            {/* Filter Dropdown - Pastel Memo Note */}
+            {showFilterDropdown && (
+              <div className="p-4 bg-[#fffaf5] border-2 border-[#8EC5FF] rounded-2xl space-y-3 shadow-sm relative">
+                <div className="flex items-center justify-between">
+                  <span className="text-xs font-handwriting font-bold text-[#082B63] uppercase tracking-wider flex items-center gap-1.5">
+                    <SparkleDoodle className="w-3.5 h-3.5" color="#1769E0" /> Filter History
+                  </span>
+                  {(historyFilter !== 'all' || historyQuery) && (
+                    <button
+                      onClick={() => {
+                        setHistoryFilter('all');
+                        setHistoryQuery('');
+                      }}
+                      className="text-xs font-cute font-bold text-[#1769E0] hover:underline cursor-pointer"
+                    >
+                      Reset all 💙
+                    </button>
+                  )}
+                </div>
+
+                <div className="flex items-center gap-3 text-xs">
+                  <span className="text-stone-500 font-cute text-sm w-16">Status:</span>
+                  <div className="flex items-center gap-1.5">
+                    {(['all', 'completed', 'pending'] as const).map((s) => (
+                      <button
+                        key={s}
+                        onClick={() => {
+                          setHistoryFilter(s);
+                          setActiveViewMode('history');
+                        }}
+                        className={`px-3 py-1 rounded-xl capitalize text-xs font-handwriting font-bold transition-all cursor-pointer ${
+                          historyFilter === s
+                            ? 'bg-[#1769E0] text-white shadow-2xs'
+                            : 'bg-white border border-[#8EC5FF] text-[#082B63] hover:bg-[#EAF4FF]'
+                        }`}
+                      >
+                        {s}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            )}
+          </div>
+
+          {/* Week Navigator */}
+          {activeViewMode === 'planner' && !historyQuery.trim() && (
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pt-4 border-t-2 border-dashed border-[#8EC5FF]/40">
+              <div className="flex flex-wrap items-center gap-2">
+                <div className="flex items-center gap-2 px-3.5 py-1.5 bg-gradient-to-r from-[#EAF4FF] via-[#D8ECFF] to-[#EAF4FF] rounded-2xl border-2 border-[#8EC5FF] shadow-2xs">
+                  <Calendar className="w-4 h-4 text-[#1769E0] shrink-0" />
+                  <span className="font-handwriting font-bold text-sm sm:text-base text-[#082B63]">
+                    {weekRangeFormatted}
+                  </span>
+                  {weekOffset === 0 ? (
+                    <span className="text-[10px] font-mono font-black px-2 py-0.5 rounded-full bg-[#1769E0] text-white flex items-center gap-1 shadow-2xs">
+                      <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+                      LIVE • Today {liveTodayFormatted}
+                    </span>
+                  ) : (
+                    <span className="text-[10px] font-mono font-bold px-2 py-0.5 rounded-full bg-[#082B63] text-[#F4C95D]">
+                      {weekOffset > 0 ? `+${weekOffset} Wk Ahead` : `${Math.abs(weekOffset)} Wk Ago`}
+                    </span>
+                  )}
+                </div>
+                <CricketBallDoodle className="w-4 h-4" />
+              </div>
+
+              <div className="flex items-center gap-2 self-start sm:self-auto">
+                <button
+                  onClick={() => setWeekOffset((prev) => prev - 1)}
+                  className="p-2 bg-[#EAF4FF] hover:bg-[#D8ECFF] border border-[#8EC5FF] rounded-2xl text-[#082B63] transition-all cursor-pointer hover:scale-105 active:scale-95 shadow-2xs"
+                  title="Previous week (History)"
+                >
+                  <ChevronLeft className="w-4 h-4 stroke-[2.5]" />
+                </button>
+                <button
+                  onClick={() => setWeekOffset(0)}
+                  className={`px-4 py-2 border rounded-2xl text-xs font-handwriting font-bold transition-all cursor-pointer hover:scale-105 active:scale-95 shadow-2xs flex items-center gap-1.5 ${
+                    weekOffset === 0
+                      ? 'bg-[#1769E0] text-white border-[#082B63]'
+                      : 'bg-[#EAF4FF] hover:bg-[#D8ECFF] border-[#8EC5FF] text-[#082B63]'
+                  }`}
+                >
+                  <span>Current Week (Live)</span>
+                  <CricketBatDoodle className="w-3.5 h-3.5" />
+                </button>
+                <button
+                  onClick={() => setWeekOffset((prev) => prev + 1)}
+                  className="p-2 bg-[#EAF4FF] hover:bg-[#D8ECFF] border border-[#8EC5FF] rounded-2xl text-[#082B63] transition-all cursor-pointer hover:scale-105 active:scale-95 shadow-2xs"
+                  title="Next week"
+                >
+                  <ChevronRight className="w-4 h-4 stroke-[2.5]" />
+                </button>
+              </div>
+            </div>
+          )}
+        </div>
+      ) : (
+        /* Cute Pastel Stationery Header Card for Navya Sri */
+        <div className="relative bg-[#FFFDF7] rounded-[28px] p-6 sm:p-7 border-2 border-[#fbcfe8] shadow-[0_8px_30px_rgba(251,207,232,0.22)] space-y-6 overflow-hidden">
+          {/* Decorative washi tapes */}
+          <div className="absolute -top-1.5 left-10 z-10">
+            <WashiTape color="pink" angle={-3} className="w-24 h-5" />
+          </div>
+          <div className="absolute -top-1.5 right-12 z-10 hidden sm:block">
+            <WashiTape color="yellow" angle={4} className="w-20 h-4" />
+          </div>
+
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-5 pt-2">
+            <div className="space-y-1">
+              <div className="flex items-center gap-3">
+                <CalendarDoodle className="w-8 h-8 shrink-0" />
+                <div>
+                  <h1 className="text-2xl sm:text-3xl font-handwriting font-bold text-[#881337] tracking-wide flex items-center gap-2">
+                    <span>Weekly Planner & Notes</span>
+                    <HeartDoodle className="w-5 h-5 text-[#f43f5e]" color="#f43f5e" />
+                    <SparkleDoodle className="w-4 h-4 text-[#f59e0b]" color="#f59e0b" />
+                  </h1>
+                </div>
+              </div>
+              <p className="text-xs sm:text-sm text-[#e11d48] font-handwriting font-semibold pl-1">
+                Small steps every day lead to big dreams ✨ Stay organized, stay glowing & smiling!
+              </p>
+            </div>
+
+            {/* View Mode Toggle - Pastel Tabs */}
+            <div className="flex items-center gap-1.5 p-1.5 bg-[#fff1f2] border border-[#fecdd3] rounded-2xl shrink-0 self-start sm:self-auto shadow-xs">
+              <button
+                onClick={() => {
+                  setActiveViewMode('planner');
+                  setHistoryQuery('');
+                }}
+                className={`px-3.5 py-1.5 rounded-xl text-xs sm:text-sm font-handwriting font-bold transition-all cursor-pointer flex items-center gap-1.5 ${
+                  activeViewMode === 'planner' && !historyQuery.trim()
+                    ? 'bg-white text-[#881337] shadow-xs border border-[#fda4af]'
+                    : 'text-[#e11d48] hover:text-[#881337] hover:bg-white/50'
+                }`}
+              >
+                <CalendarDoodle className="w-3.5 h-3.5" />
+                <span>Weekly Grid</span>
+              </button>
+              <button
+                onClick={() => setActiveViewMode('history')}
+                className={`px-3.5 py-1.5 rounded-xl text-xs sm:text-sm font-handwriting font-bold transition-all cursor-pointer flex items-center gap-1.5 ${
+                  activeViewMode === 'history' || historyQuery.trim()
+                    ? 'bg-white text-[#881337] shadow-xs border border-[#fda4af]'
+                    : 'text-[#e11d48] hover:text-[#881337] hover:bg-white/50'
+                }`}
+              >
+                <History className="w-3.5 h-3.5 text-[#f43f5e]" />
+                <span>Task History ({todos.length})</span>
+              </button>
+            </div>
+          </div>
+
+          {/* Motivational Quote Banner */}
+          <div className="flex items-center justify-between gap-2 p-3 bg-white/80 border border-[#fbcfe8] rounded-xl text-xs font-handwriting">
+            <div className="flex items-center gap-2 text-[#881337] font-bold">
+              <FlowerDoodle className="w-4 h-4" />
+              <span>"One day at a time, you are doing amazing ♡"</span>
+            </div>
+            <div className="text-[11px] font-bold text-[#e11d48] hidden md:block">
+              "Stay organized, stay radiant." ✨🌸
             </div>
           </div>
 
@@ -322,10 +583,23 @@ export const WeeklyPlanner: React.FC<WeeklyPlannerProps> = ({
           {/* Week Navigator (Planner Mode) */}
           {activeViewMode === 'planner' && !historyQuery.trim() && (
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pt-4 border-t-2 border-dashed border-[#fce7f3]">
-              <div className="flex items-center gap-2">
-                <span className="font-handwriting font-bold text-base sm:text-lg text-[#881337] px-3 py-1 bg-gradient-to-r from-[#ffe4e6] via-[#fecdd3] to-[#ffe4e6] rounded-xl border border-[#fda4af]/60 shadow-2xs">
-                  Week of {mondayDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
-                </span>
+              <div className="flex flex-wrap items-center gap-2">
+                <div className="flex items-center gap-2 px-3.5 py-1.5 bg-gradient-to-r from-[#ffe4e6] via-[#fecdd3] to-[#ffe4e6] rounded-2xl border border-[#fda4af]/60 shadow-2xs">
+                  <Calendar className="w-4 h-4 text-[#e11d48] shrink-0" />
+                  <span className="font-handwriting font-bold text-sm sm:text-base text-[#881337]">
+                    {weekRangeFormatted}
+                  </span>
+                  {weekOffset === 0 ? (
+                    <span className="text-[10px] font-mono font-black px-2 py-0.5 rounded-full bg-[#f43f5e] text-white flex items-center gap-1 shadow-2xs">
+                      <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+                      LIVE • Today {liveTodayFormatted}
+                    </span>
+                  ) : (
+                    <span className="text-[10px] font-mono font-bold px-2 py-0.5 rounded-full bg-[#881337] text-white">
+                      {weekOffset > 0 ? `+${weekOffset} Wk Ahead` : `${Math.abs(weekOffset)} Wk Ago`}
+                    </span>
+                  )}
+                </div>
                 <BowDoodle className="w-5 h-4 opacity-80" color="#f43f5e" />
               </div>
 
@@ -339,10 +613,14 @@ export const WeeklyPlanner: React.FC<WeeklyPlannerProps> = ({
                 </button>
                 <button
                   onClick={() => setWeekOffset(0)}
-                  className="px-4 py-2 bg-[#fff1f2] hover:bg-[#ffe4e6] border border-[#fecdd3] rounded-2xl text-xs font-handwriting font-bold text-[#be123c] transition-all cursor-pointer hover:scale-105 active:scale-95 shadow-2xs flex items-center gap-1.5"
+                  className={`px-4 py-2 border rounded-2xl text-xs font-handwriting font-bold transition-all cursor-pointer hover:scale-105 active:scale-95 shadow-2xs flex items-center gap-1.5 ${
+                    weekOffset === 0
+                      ? 'bg-[#f43f5e] text-white border-[#be123c]'
+                      : 'bg-[#fff1f2] hover:bg-[#ffe4e6] border border-[#fecdd3] text-[#be123c]'
+                  }`}
                 >
-                  <span>Current Week</span>
-                  <HeartDoodle className="w-3 h-3" color="#f43f5e" />
+                  <span>Current Week (Live)</span>
+                  <HeartDoodle className="w-3 h-3" color={weekOffset === 0 ? '#fff' : '#f43f5e'} />
                 </button>
                 <button
                   onClick={() => setWeekOffset((prev) => prev + 1)}
@@ -355,209 +633,22 @@ export const WeeklyPlanner: React.FC<WeeklyPlannerProps> = ({
             </div>
           )}
         </div>
-      ) : (
-        /* Normal Modern Header Card */
-        <div className="bg-white rounded-3xl p-6 sm:p-7 border border-slate-200/80 shadow-xs space-y-6">
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-5">
-            <div className="space-y-1">
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-xl bg-blue-50 border border-blue-100 flex items-center justify-center text-blue-600">
-                  <Calendar className="w-5 h-5" />
-                </div>
-                <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">
-                  Weekly Planner & History
-                </h1>
-              </div>
-              <p className="text-xs sm:text-sm text-slate-500 font-medium pl-1">
-                Find historical tasks, organize upcoming workload, and rebalance schedules with real-time sync.
-              </p>
-            </div>
-
-            {/* View Mode Toggle */}
-            <div className="flex items-center gap-1.5 p-1 bg-slate-100 border border-slate-200/80 rounded-xl shrink-0 self-start sm:self-auto">
-              <button
-                onClick={() => {
-                  setActiveViewMode('planner');
-                  setHistoryQuery('');
-                }}
-                className={`px-3.5 py-1.5 rounded-lg text-xs sm:text-sm font-semibold transition-all cursor-pointer ${
-                  activeViewMode === 'planner' && !historyQuery.trim()
-                    ? 'bg-white text-slate-900 shadow-xs'
-                    : 'text-slate-600 hover:text-slate-900'
-                }`}
-              >
-                Weekly Grid
-              </button>
-              <button
-                onClick={() => setActiveViewMode('history')}
-                className={`px-3.5 py-1.5 rounded-lg text-xs sm:text-sm font-semibold transition-all cursor-pointer flex items-center gap-1.5 ${
-                  activeViewMode === 'history' || historyQuery.trim()
-                    ? 'bg-white text-blue-600 shadow-xs'
-                    : 'text-slate-600 hover:text-slate-900'
-                }`}
-              >
-                <History className="w-3.5 h-3.5" />
-                <span>Task History ({todos.length})</span>
-              </button>
-            </div>
-          </div>
-
-          {/* Search & Filter Bar */}
-          <div className="w-full space-y-2.5">
-            <div className="relative flex items-center w-full">
-              <div className="absolute left-3.5 pointer-events-none text-slate-400">
-                <Search className="w-4 h-4" />
-              </div>
-              <input
-                id="history-search-input"
-                type="text"
-                value={historyQuery}
-                onChange={(e) => {
-                  const val = e.target.value;
-                  setHistoryQuery(val);
-                  if (val.trim()) {
-                    setActiveViewMode('history');
-                  }
-                }}
-                placeholder="Find history tasks (title, date, tag)..."
-                className="w-full bg-slate-50 hover:bg-slate-100/60 focus:bg-white text-slate-900 placeholder:text-slate-400 text-sm font-normal pl-10 pr-26 py-2.5 sm:py-3 rounded-xl border border-slate-200 focus:border-blue-500 focus:ring-4 focus:ring-blue-100 transition-all outline-none"
-              />
-              <div className="absolute right-2.5 flex items-center gap-1.5">
-                {historyQuery && (
-                  <button
-                    onClick={() => setHistoryQuery('')}
-                    className="p-1.5 text-slate-400 hover:text-slate-600 rounded-lg transition-colors cursor-pointer"
-                    title="Clear search"
-                  >
-                    <X className="w-3.5 h-3.5" />
-                  </button>
-                )}
-                <button
-                  onClick={() => setShowFilterDropdown((prev) => !prev)}
-                  className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all cursor-pointer border ${
-                    showFilterDropdown || historyFilter !== 'all'
-                      ? 'bg-blue-600 border-blue-600 text-white shadow-xs'
-                      : 'bg-white hover:bg-slate-50 border-slate-200 text-slate-700'
-                  }`}
-                  title="Toggle filters"
-                >
-                  <Filter className="w-3 h-3" />
-                  <span>Filter</span>
-                  {historyFilter !== 'all' && (
-                    <span className="w-1.5 h-1.5 rounded-full bg-white animate-ping" />
-                  )}
-                </button>
-              </div>
-            </div>
-
-            {/* Filter Dropdown */}
-            {showFilterDropdown && (
-              <div className="p-4 bg-slate-50 border border-slate-200 rounded-xl space-y-3 shadow-xs">
-                <div className="flex items-center justify-between">
-                  <span className="text-xs font-semibold text-slate-700 uppercase tracking-wider">
-                    Filter History
-                  </span>
-                  {(historyFilter !== 'all' || historyQuery) && (
-                    <button
-                      onClick={() => {
-                        setHistoryFilter('all');
-                        setHistoryQuery('');
-                      }}
-                      className="text-xs font-medium text-blue-600 hover:underline cursor-pointer"
-                    >
-                      Reset all
-                    </button>
-                  )}
-                </div>
-
-                <div className="flex items-center gap-3 text-xs">
-                  <span className="text-slate-500 font-medium w-16">Status:</span>
-                  <div className="flex items-center gap-1.5">
-                    {(['all', 'completed', 'pending'] as const).map((s) => (
-                      <button
-                        key={s}
-                        onClick={() => {
-                          setHistoryFilter(s);
-                          setActiveViewMode('history');
-                        }}
-                        className={`px-3 py-1 rounded-lg capitalize text-xs font-medium transition-all cursor-pointer ${
-                          historyFilter === s
-                            ? 'bg-blue-600 text-white'
-                            : 'bg-white border border-slate-200 text-slate-700 hover:bg-slate-100'
-                        }`}
-                      >
-                        {s}
-                      </button>
-                    ))}
-                  </div>
-                </div>
-              </div>
-            )}
-          </div>
-
-          {/* Search meta & reset */}
-          {(historyQuery.trim() || historyFilter !== 'all') && (
-            <div className="flex items-center gap-2 mt-2 text-xs text-slate-600">
-              <span>
-                Found {filteredHistory.length} matching task{filteredHistory.length === 1 ? '' : 's'} across history
-              </span>
-              <button
-                onClick={() => {
-                  setHistoryQuery('');
-                  setHistoryFilter('all');
-                }}
-                className="text-blue-600 hover:text-blue-800 font-medium underline flex items-center gap-0.5 cursor-pointer ml-1"
-              >
-                <X className="w-3 h-3" /> Clear history search
-              </button>
-            </div>
-          )}
-
-          {/* Week Navigator */}
-          {activeViewMode === 'planner' && !historyQuery.trim() && (
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pt-4 border-t border-slate-100">
-              <div className="flex items-center gap-2">
-                <span className="font-semibold text-sm sm:text-base text-slate-900">
-                  Week of {mondayDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
-                </span>
-              </div>
-
-              <div className="flex items-center gap-2 self-start sm:self-auto">
-                <button
-                  onClick={() => setWeekOffset((prev) => prev - 1)}
-                  className="p-2 bg-slate-50 hover:bg-slate-100 border border-slate-200 rounded-xl text-slate-700 transition-all cursor-pointer"
-                  title="Previous week"
-                >
-                  <ChevronLeft className="w-4 h-4" />
-                </button>
-                <button
-                  onClick={() => setWeekOffset(0)}
-                  className="px-3.5 py-1.5 bg-slate-50 hover:bg-slate-100 border border-slate-200 rounded-xl text-xs font-semibold text-slate-700 transition-all cursor-pointer"
-                >
-                  Current Week
-                </button>
-                <button
-                  onClick={() => setWeekOffset((prev) => prev + 1)}
-                  className="p-2 bg-slate-50 hover:bg-slate-100 border border-slate-200 rounded-xl text-slate-700 transition-all cursor-pointer"
-                  title="Next week"
-                >
-                  <ChevronRight className="w-4 h-4" />
-                </button>
-              </div>
-            </div>
-          )}
-        </div>
       )}
 
       {/* RENDER MODE: TASK HISTORY SEARCH RESULTS */}
       {(activeViewMode === 'history' || historyQuery.trim()) ? (
         isSpecial ? (
           <div className="bg-[#fffdfa] rounded-[28px] p-6 sm:p-8 border-2 border-[#e9d5ff] shadow-[0_8px_30px_rgba(216,180,254,0.18)] space-y-5 relative overflow-hidden">
+            {/* Real Rohit Die-Cut Stickers (2 on Main History Card) */}
+            {isRohit && (
+              <MainCardStickers leftPose="bat_raise" rightPose="upper_cut" size={64} />
+            )}
+
             <div className="absolute -top-1.5 left-12 z-10">
               <WashiTape color="lavender" angle={-2} className="w-20 h-4" />
             </div>
 
-            <div className="flex items-center justify-between border-b-2 border-dashed border-[#f3e8ff] pb-4 pt-1">
+            <div className="flex items-center justify-between border-b-2 border-dashed border-[#f3e8ff] pb-4 pt-1 relative z-10">
               <div className="flex items-center gap-2.5">
                 <History className="w-5 h-5 text-[#9333ea]" />
                 <h2 className="text-xl sm:text-2xl font-handwriting font-bold text-[#581c87]">
@@ -664,9 +755,19 @@ export const WeeklyPlanner: React.FC<WeeklyPlannerProps> = ({
                       </div>
 
                       <div className="pt-2 border-t border-dashed border-[#f3e8ff] flex items-center justify-between text-xs font-cute">
-                        <span className="text-[11px] text-stone-400">
-                          {task.completed ? 'Completed ♡' : 'Pending ✨'}
-                        </span>
+                        <div className="flex items-center gap-1.5">
+                          {isRohit && (
+                            <CardStickerBadge
+                              taskIndex={idx}
+                              completed={task.completed}
+                              size={34}
+                              className="shrink-0 transition-transform hover:scale-125"
+                            />
+                          )}
+                          <span className="text-[11px] text-stone-400">
+                            {task.completed ? 'Completed ♡' : 'Pending ✨'}
+                          </span>
+                        </div>
                         <div className="flex items-center gap-2">
                           {onFocusTask && !task.completed && (
                             <button
@@ -725,15 +826,21 @@ export const WeeklyPlanner: React.FC<WeeklyPlannerProps> = ({
 
             {filteredHistory.length > 0 ? (
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                {filteredHistory.map((task) => {
+                {filteredHistory.map((task, taskIdx) => {
                   const dueInfo = checkTaskTimeCompleted(task, userTimezone);
                   const isAlerting = dueInfo.isDue && !task.completed;
 
                   return (
                     <div
                       key={task.id}
-                      className={`p-4 rounded-xl border transition-all flex flex-col justify-between gap-3 ${
-                        task.completed
+                      className={`p-4 rounded-xl border transition-all flex flex-col justify-between gap-3 relative overflow-hidden ${
+                        isRohit
+                          ? task.completed
+                            ? 'bg-[#F0FFF4] border-[#86EFAC] text-slate-400'
+                            : isAlerting
+                            ? 'bg-rose-50/70 border-rose-300 ring-1 ring-rose-200'
+                            : 'bg-white border-[#8EC5FF] hover:border-[#1769E0] shadow-2xs'
+                          : task.completed
                           ? 'bg-slate-50 border-slate-200/60 text-slate-400'
                           : isAlerting
                           ? 'bg-rose-50/70 border-rose-300 ring-1 ring-rose-200'
@@ -758,11 +865,22 @@ export const WeeklyPlanner: React.FC<WeeklyPlannerProps> = ({
                           <div className="min-w-0 flex-1">
                             <h4
                               className={`text-sm font-semibold truncate ${
+                                isRohit ? 'font-handwriting font-bold text-base' : ''
+                              } ${
                                 task.completed ? 'line-through text-slate-400' : 'text-slate-800'
                               }`}
                             >
                               {task.title}
                             </h4>
+                            {isRohit && (
+                              <div className="pt-0.5">
+                                <HitmanCardEmojiRow
+                                  taskIndex={taskIdx}
+                                  completed={task.completed}
+                                  isAlerting={isAlerting}
+                                />
+                              </div>
+                            )}
                             {task.description && (
                               <p className="text-xs text-slate-500 line-clamp-2 mt-0.5">
                                 {task.description}
@@ -853,34 +971,70 @@ export const WeeklyPlanner: React.FC<WeeklyPlannerProps> = ({
               return (
                 <div
                   key={day.date}
-                  className={`flex flex-col rounded-[26px] border-2 p-3.5 sm:p-4 transition-all min-h-[410px] relative overflow-hidden bg-[#FFFDF7] shadow-[0_4px_20px_rgba(8,43,99,0.08)] ${
-                    day.isToday
-                      ? 'border-[#1769E0] ring-3 ring-blue-300/40'
-                      : 'border-[#8EC5FF]/80 hover:border-[#1769E0]'
+                  className={`flex flex-col rounded-[26px] border-2 p-3.5 sm:p-4 transition-all min-h-[410px] relative overflow-hidden bg-[#FFFDF7] ${
+                    isRohit
+                      ? `shadow-[0_4px_20px_rgba(8,43,99,0.08)] ${
+                          day.isToday
+                            ? 'border-[#1769E0] ring-3 ring-blue-300/40'
+                            : 'border-[#8EC5FF]/80 hover:border-[#1769E0]'
+                        }`
+                      : `shadow-[0_4px_20px_rgba(251,207,232,0.2)] ${
+                          day.isToday
+                            ? 'border-[#f43f5e] ring-3 ring-rose-200/50'
+                            : 'border-[#fbcfe8] hover:border-[#f43f5e]'
+                        }`
                   }`}
                 >
                   {/* Washi tape on top edge of each planner card */}
                   <div className="absolute -top-1 left-1/2 -translate-x-1/2 z-10">
-                    <WashiTape color="blue" angle={washiAngle} className="w-16 h-3.5" />
+                    <WashiTape
+                      color={isRohit ? 'blue' : washiColor}
+                      angle={washiAngle}
+                      className="w-16 h-3.5"
+                    />
                   </div>
 
                   {/* Card Header (MON / TUE / etc. with date and + Add button) */}
-                  <div className="flex items-center justify-between pb-3 border-b-2 border-dashed border-[#8EC5FF]/50 mb-3 pt-2">
+                  <div
+                    className={`flex items-center justify-between pb-3 border-b-2 border-dashed mb-3 pt-2 ${
+                      isRohit ? 'border-[#8EC5FF]/50' : 'border-[#fce7f3]'
+                    }`}
+                  >
                     <div>
                       <div className="flex items-center gap-1.5">
-                        <span className="font-handwriting font-bold text-base text-[#082B63] tracking-wider uppercase">
+                        {isRohit && (
+                          <CardStickerBadge taskIndex={dayIdx} size={28} className="shrink-0" />
+                        )}
+                        <span
+                          className={`font-handwriting font-bold text-base tracking-wider uppercase ${
+                            isRohit ? 'text-[#082B63]' : 'text-[#881337]'
+                          }`}
+                        >
                           {day.dayName}
                         </span>
                         {day.isToday && (
-                          <span className="text-[10px] font-handwriting font-bold px-2 py-0.5 bg-[#1769E0] text-white rounded-full flex items-center gap-1 shadow-xs">
-                            <CricketBallDoodle className="w-2.5 h-2.5" />
-                            Match Day 45
-                          </span>
+                          isRohit ? (
+                            <span className="text-[10px] font-handwriting font-bold px-2 py-0.5 bg-[#1769E0] text-white rounded-full flex items-center gap-1 shadow-xs">
+                              <CricketBallDoodle className="w-2.5 h-2.5" />
+                              Match Day 45
+                            </span>
+                          ) : (
+                            <span className="text-[10px] font-handwriting font-bold px-2 py-0.5 bg-[#f43f5e] text-white rounded-full flex items-center gap-1 shadow-xs">
+                              <HeartDoodle className="w-2.5 h-2.5" color="#fff" />
+                              Today ✨
+                            </span>
+                          )
                         )}
                       </div>
                       <p
                         className={`text-xs font-handwriting font-bold ${
-                          day.isToday ? 'text-[#1769E0]' : 'text-[#082B63]/70'
+                          isRohit
+                            ? day.isToday
+                              ? 'text-[#1769E0]'
+                              : 'text-[#082B63]/70'
+                            : day.isToday
+                            ? 'text-[#f43f5e]'
+                            : 'text-[#881337]/70'
                         }`}
                       >
                         {day.displayDate}
@@ -889,7 +1043,11 @@ export const WeeklyPlanner: React.FC<WeeklyPlannerProps> = ({
 
                     <button
                       onClick={() => onOpenCreateModal(day.date)}
-                      className="p-1.5 hover:bg-[#EAF4FF] text-[#1769E0] border border-transparent hover:border-[#8EC5FF] rounded-xl transition-all cursor-pointer hover:scale-110 active:scale-95"
+                      className={`p-1.5 rounded-xl border border-transparent transition-all cursor-pointer hover:scale-110 active:scale-95 ${
+                        isRohit
+                          ? 'hover:bg-[#EAF4FF] text-[#1769E0] hover:border-[#8EC5FF]'
+                          : 'hover:bg-[#fff1f2] text-[#f43f5e] hover:border-[#fda4af]'
+                      }`}
                       title={`Add task for ${day.fullDayName}`}
                     >
                       <Plus className="w-4 h-4 stroke-[2.5]" />
@@ -905,14 +1063,27 @@ export const WeeklyPlanner: React.FC<WeeklyPlannerProps> = ({
                       return (
                         <div
                           key={task.id}
-                          className={`p-3 rounded-[20px] border-2 transition-all space-y-2 relative overflow-hidden ${
-                            task.completed
-                              ? 'bg-[#F0FFF4] border-[#86EFAC] text-stone-400'
+                          className={`p-3 rounded-[20px] border-2 transition-all space-y-2 relative overflow-hidden group ${
+                            isRohit
+                              ? task.completed
+                                ? 'bg-[#F0FFF4] border-[#86EFAC] text-stone-400'
+                                : isAlerting
+                                ? 'bg-[#FFF5F7] border-[#dc2626] ring-2 ring-red-200 shadow-md'
+                                : 'bg-white border-[#8EC5FF] hover:border-[#1769E0] hover:shadow-md'
+                              : task.completed
+                              ? 'bg-[#fdfaf6]/90 border-[#fbcfe8]/70 text-stone-400'
                               : isAlerting
                               ? 'bg-[#FFF5F7] border-[#dc2626] ring-2 ring-red-200 shadow-md'
-                              : 'bg-white border-[#8EC5FF] hover:border-[#1769E0] shadow-xs'
+                              : 'bg-white border-[#fbcfe8] hover:border-[#f43f5e] hover:shadow-sm'
                           }`}
                         >
+                          {/* Subtle Hitman Watermark on card for Rohit users */}
+                          {isRohit && !task.completed && (
+                            <div className="absolute right-1.5 -bottom-1.5 text-[28px] opacity-10 pointer-events-none group-hover:opacity-25 transition-opacity font-mono font-black select-none text-[#1769E0]">
+                              45
+                            </div>
+                          )}
+
                           {/* Task title and checkbox */}
                           <div className="flex items-start justify-between gap-2">
                             <button
@@ -920,10 +1091,14 @@ export const WeeklyPlanner: React.FC<WeeklyPlannerProps> = ({
                               onClick={() => onToggleTodo(task.id)}
                               className={`mt-0.5 w-4.5 h-4.5 rounded-md border-2 transition-all flex items-center justify-center shrink-0 cursor-pointer ${
                                 task.completed
-                                  ? 'bg-[#16a34a] border-[#16a34a] text-white'
+                                  ? isRohit
+                                    ? 'bg-[#16a34a] border-[#16a34a] text-white'
+                                    : 'bg-[#f43f5e] border-[#f43f5e] text-white'
                                   : isAlerting
                                   ? 'border-[#dc2626] hover:border-[#b91c1c] bg-white'
-                                  : 'border-[#8EC5FF] hover:border-[#1769E0] bg-white'
+                                  : isRohit
+                                  ? 'border-[#8EC5FF] hover:border-[#1769E0] bg-white'
+                                  : 'border-[#fda4af] hover:border-[#f43f5e] bg-white'
                               }`}
                               title={task.completed ? 'Mark incomplete' : 'Mark completed'}
                             >
@@ -935,27 +1110,51 @@ export const WeeklyPlanner: React.FC<WeeklyPlannerProps> = ({
                                 className={`font-handwriting font-bold text-xs sm:text-sm leading-snug block truncate px-1 rounded-sm ${
                                   task.completed
                                     ? 'line-through text-stone-400'
-                                    : 'text-[#082B63]'
+                                    : isRohit
+                                    ? 'text-[#082B63]'
+                                    : 'text-[#881337]'
                                 }`}
                               >
                                 {task.title}
                               </span>
                             </div>
 
-                            {/* Tiny trophy or ball doodle for active/completed tasks */}
-                            <div className="shrink-0">
-                              {task.completed ? (
-                                <TrophyDoodle className="w-3.5 h-3.5 text-[#eab308]" />
+                            {/* Tiny animated trophy, ball or doodle for active/completed tasks */}
+                            <div className="shrink-0 flex items-center gap-1">
+                              {isRohit ? (
+                                task.completed ? (
+                                  <AnimatedHitmanTrophy className="w-4 h-4" />
+                                ) : isAlerting ? (
+                                  <span className="relative flex h-2.5 w-2.5">
+                                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75" />
+                                    <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-[#dc2626]" />
+                                  </span>
+                                ) : (
+                                  <AnimatedCricketBall className="w-3.5 h-3.5" />
+                                )
+                              ) : task.completed ? (
+                                <SparkleDoodle className="w-3.5 h-3.5" color="#f59e0b" />
                               ) : isAlerting ? (
                                 <span className="relative flex h-2.5 w-2.5">
                                   <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75" />
                                   <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-[#dc2626]" />
                                 </span>
                               ) : (
-                                <CricketBallDoodle className="w-3 h-3" />
+                                <FlowerDoodle className="w-3 h-3" />
                               )}
                             </div>
                           </div>
+
+                          {/* Animated Hitman Emoji Row on Card for Rohit users */}
+                          {isRohit && (
+                            <div className="pt-0.5">
+                              <HitmanCardEmojiRow
+                                taskIndex={taskIdx}
+                                completed={task.completed}
+                                isAlerting={isAlerting}
+                              />
+                            </div>
+                          )}
 
                           {/* Alert chip if time completed */}
                           {isAlerting && (
@@ -981,11 +1180,28 @@ export const WeeklyPlanner: React.FC<WeeklyPlannerProps> = ({
 
                           {/* Category Tag, Focus & Move Actions */}
                           <div className="pt-1.5 border-t border-dashed border-[#ffe4e6] flex items-center justify-between text-[11px] font-cute">
-                            <span className="text-[#be123c] font-bold px-2 py-0.5 rounded-full bg-[#fff1f2] border border-[#fecdd3] truncate max-w-[68px]">
-                              {task.category}
-                            </span>
+                            <div className="flex items-center gap-1 truncate max-w-[110px]">
+                              <span className="text-[#be123c] font-bold px-2 py-0.5 rounded-full bg-[#fff1f2] border border-[#fecdd3] truncate text-[10px]">
+                                {task.category}
+                              </span>
+                              {isRohit && !task.completed && (
+                                <HitmanCardMiniBadge
+                                  type={taskIdx % 2 === 0 ? 'pullshot' : 'sixer'}
+                                />
+                              )}
+                            </div>
 
                             <div className="flex items-center gap-1.5">
+                              {/* Real Rohit Sticker on Task Card */}
+                              {isRohit && (
+                                <CardStickerBadge
+                                  taskIndex={taskIdx}
+                                  completed={task.completed}
+                                  size={30}
+                                  className="shrink-0 transition-transform group-hover:scale-125"
+                                />
+                              )}
+
                               {onFocusTask && (
                                 <button
                                   type="button"
@@ -1043,16 +1259,40 @@ export const WeeklyPlanner: React.FC<WeeklyPlannerProps> = ({
                     {day.tasks.length === 0 && (
                       <div
                         onClick={() => onOpenCreateModal(day.date)}
-                        className="min-h-[120px] border-2 border-dashed border-[#fda4af]/70 hover:border-[#f43f5e] bg-[#fff8f8]/60 hover:bg-[#fff1f2]/80 rounded-[20px] flex flex-col items-center justify-center p-3 text-[#be123c] cursor-pointer transition-all group"
+                        className={`min-h-[120px] border-2 border-dashed rounded-[20px] flex flex-col items-center justify-center p-3 cursor-pointer transition-all group ${
+                          isRohit
+                            ? 'border-[#8EC5FF]/70 hover:border-[#1769E0] bg-[#F5FAFF]/60 hover:bg-[#EAF4FF]/80 text-[#082B63]'
+                            : 'border-[#fda4af]/70 hover:border-[#f43f5e] bg-[#fff8f8]/60 hover:bg-[#fff1f2]/80 text-[#be123c]'
+                        }`}
                       >
-                        <div className="w-8 h-8 rounded-full bg-white border border-[#fecdd3] flex items-center justify-center mb-1 group-hover:scale-110 transition-transform shadow-2xs">
-                          <PencilIllustration className="w-5 h-5 opacity-80" />
+                        <div
+                          className={`w-8 h-8 rounded-full bg-white border flex items-center justify-center mb-1 group-hover:scale-110 transition-transform shadow-2xs ${
+                            isRohit ? 'border-[#8EC5FF] text-[#1769E0]' : 'border-[#fecdd3]'
+                          }`}
+                        >
+                          {isRohit ? (
+                            <AnimatedCricketBall className="w-4 h-4" />
+                          ) : (
+                            <PencilIllustration className="w-5 h-5 opacity-80" />
+                          )}
                         </div>
-                        <span className="font-handwriting font-bold text-xs text-[#be123c] group-hover:text-[#9f1239]">
+                        <span
+                          className={`font-handwriting font-bold text-xs ${
+                            isRohit
+                              ? 'text-[#082B63] group-hover:text-[#1769E0]'
+                              : 'text-[#be123c] group-hover:text-[#9f1239]'
+                          }`}
+                        >
                           + Add task
                         </span>
-                        <span className="font-cute text-[11px] text-[#fda4af] group-hover:text-[#fb7185] mt-0.5">
-                          fresh page for your plan ♡
+                        <span
+                          className={`font-cute text-[11px] mt-0.5 ${
+                            isRohit
+                              ? 'text-[#1769E0]/80 group-hover:text-[#082B63] font-handwriting font-semibold'
+                              : 'text-[#fda4af] group-hover:text-[#fb7185]'
+                          }`}
+                        >
+                          {isRohit ? 'Hitman! Plan today’s innings 🏏' : 'fresh page for your plan ♡'}
                         </span>
                       </div>
                     )}

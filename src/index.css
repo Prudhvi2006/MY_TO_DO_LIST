@@ -183,6 +183,134 @@ body {
   backdrop-filter: blur(2px);
 }
 
+/* Hitman Card Emojis & Micro Animations */
+@keyframes hitman-pull-shot {
+  0%, 100% {
+    transform: rotate(0deg) scale(1);
+  }
+  25% {
+    transform: rotate(-14deg) scale(0.96);
+  }
+  50% {
+    transform: rotate(20deg) scale(1.12);
+  }
+  75% {
+    transform: rotate(6deg) scale(1.04);
+  }
+}
+
+@keyframes hitman-bat-swing {
+  0%, 100% {
+    transform: rotate(-6deg) translateY(0);
+  }
+  50% {
+    transform: rotate(18deg) translateY(-2px) scale(1.1);
+  }
+}
+
+@keyframes hitman-ball-spin {
+  0% {
+    transform: rotate(0deg) translateY(0);
+  }
+  50% {
+    transform: rotate(180deg) translateY(-3px) scale(1.08);
+  }
+  100% {
+    transform: rotate(360deg) translateY(0);
+  }
+}
+
+@keyframes hitman-six-burst {
+  0%, 100% {
+    transform: scale(1) rotate(0deg);
+    filter: drop-shadow(0 0 2px rgba(23, 105, 224, 0.3));
+  }
+  50% {
+    transform: scale(1.22) rotate(-5deg);
+    filter: drop-shadow(0 0 8px rgba(244, 201, 93, 0.9));
+  }
+}
+
+@keyframes hitman-float-gentle {
+  0%, 100% {
+    transform: translateY(0px) rotate(0deg);
+  }
+  50% {
+    transform: translateY(-4px) rotate(4deg);
+  }
+}
+
+@keyframes hitman-cap-bob {
+  0%, 100% {
+    transform: rotate(0deg) translateY(0);
+  }
+  30% {
+    transform: rotate(-8deg) translateY(-2px);
+  }
+  70% {
+    transform: rotate(6deg) translateY(-1px);
+  }
+}
+
+@keyframes hitman-electric-pulse {
+  0%, 100% {
+    transform: scale(1);
+    filter: drop-shadow(0 0 1px rgba(23, 105, 224, 0.4));
+  }
+  50% {
+    transform: scale(1.14);
+    filter: drop-shadow(0 0 6px rgba(244, 201, 93, 0.85)) drop-shadow(0 0 10px rgba(23, 105, 224, 0.5));
+  }
+}
+
+@keyframes hitman-sparkle-twinkle {
+  0%, 100% {
+    opacity: 0.5;
+    transform: scale(0.8) rotate(0deg);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.2) rotate(45deg);
+  }
+}
+
+.animate-hitman-pull {
+  animation: hitman-pull-shot 2.4s ease-in-out infinite;
+  transform-origin: bottom center;
+}
+
+.animate-hitman-swing {
+  animation: hitman-bat-swing 2s ease-in-out infinite;
+  transform-origin: top center;
+}
+
+.animate-hitman-spin {
+  animation: hitman-ball-spin 2.8s linear infinite;
+  transform-origin: center;
+}
+
+.animate-hitman-six {
+  animation: hitman-six-burst 1.8s ease-in-out infinite;
+}
+
+.animate-hitman-float {
+  animation: hitman-float-gentle 2.6s ease-in-out infinite;
+}
+
+.animate-hitman-cap {
+  animation: hitman-cap-bob 2.2s ease-in-out infinite;
+  transform-origin: center bottom;
+}
+
+.animate-hitman-electric {
+  animation: hitman-electric-pulse 1.6s ease-in-out infinite;
+}
+
+.animate-hitman-twinkle {
+  animation: hitman-sparkle-twinkle 1.4s ease-in-out infinite;
+}
+
+
 
 .toggleWrapper .input {
   position: absolute;

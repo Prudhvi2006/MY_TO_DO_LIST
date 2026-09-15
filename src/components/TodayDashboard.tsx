@@ -48,8 +48,23 @@ import {
   RisingSunDoodle,
   CricketPitchDoodle,
   StarDoodle,
+  AnimatedHitmanPullShot,
+  AnimatedCricketBall,
+  AnimatedCricketBat,
+  AnimatedSixerBadge,
+  AnimatedHitmanCap,
+  AnimatedJersey45Badge,
+  AnimatedHitmanCrown,
+  AnimatedHitmanTrophy,
+  HitmanCardMiniBadge,
+  HitmanCardEmojiRow,
+  RealRohitSticker,
+  CardStickerBadge,
+  MainCardStickers,
+  RohitStickerShowcase,
 } from './CricketDoodles.tsx';
-import { isSpecialUser } from '../lib/userTheme.ts';
+import { isSpecialUser, isRohitUser } from '../lib/userTheme.ts';
+import { HabitTracker } from './HabitTracker.tsx';
 
 interface TodayDashboardProps {
   user: User;
@@ -124,12 +139,16 @@ export const TodayDashboard: React.FC<TodayDashboardProps> = ({
   }, [data?.tasks, searchQuery, statusFilter, priorityFilter]);
 
   const isSpecial = isSpecialUser(user?.email);
+  const isRohit = isRohitUser(user?.email);
 
   return (
     <div id="today-dashboard-view" className="space-y-6">
-      {/* Welcome Banner & Motivation - Rohit Sharma Fan Scrapbook Theme OR Clean Normal UI */}
-      {isSpecial ? (
+      {/* Welcome Banner & Motivation - Rohit Sharma Hitman Theme vs Cute Pastel Stationery for Navya Sri */}
+      {isRohit ? (
         <div className="relative bg-[#FFFDF7] rounded-[28px] p-6 sm:p-8 border-2 border-[#8EC5FF] shadow-[0_8px_30px_rgba(8,43,99,0.1)] space-y-6 overflow-hidden">
+          {/* Real Rohit Die-Cut Stickers (2 on Main Hero Card) */}
+          <MainCardStickers leftPose="trophy" rightPose="pull_shot" size={72} />
+
           {/* Decorative washi tapes */}
           <div className="absolute -top-1.5 left-10 z-10">
             <WashiTape color="blue" angle={-3} className="w-24 h-5" />
@@ -139,8 +158,8 @@ export const TodayDashboard: React.FC<TodayDashboardProps> = ({
           </div>
 
           {/* Header section with Rohit branding and hero polaroid */}
-          <div className="flex flex-col md:flex-row md:items-center justify-between gap-5 pt-2">
-            <div className="flex items-start gap-4">
+          <div className="flex flex-col xl:flex-row xl:items-center justify-between gap-5 pt-2">
+            <div className="flex items-start gap-3 sm:gap-4 min-w-0 flex-1">
               {/* Polaroid-framed Rohit Sharma portrait */}
               <div className="relative bg-white p-2 rounded-2xl shadow-md border border-[#8EC5FF]/80 -rotate-2 hover:rotate-0 transition-transform duration-300 shrink-0 hidden sm:block">
                 <img
@@ -150,59 +169,63 @@ export const TodayDashboard: React.FC<TodayDashboardProps> = ({
                   referrerPolicy="no-referrer"
                 />
                 <div className="text-center mt-1">
-                  <span className="font-handwriting font-bold text-[11px] text-[#082B63]">
+                  <span className="font-handwriting font-bold text-[11px] text-[#082B63] whitespace-nowrap">
                     Hitman 45 💙
                   </span>
                 </div>
               </div>
 
-              <div>
-                <div className="flex items-center gap-2 text-xs font-mono font-bold uppercase tracking-wider text-[#1769E0] mb-1">
-                  <CricketBallDoodle className="w-3.5 h-3.5" />
-                  <span>{formattedDate}</span>
-                  <span className="text-[#8EC5FF]">•</span>
-                  <span>{user.timezone}</span>
+              <div className="min-w-0 flex-1 space-y-1.5">
+                <div className="flex items-center flex-wrap gap-x-2.5 gap-y-1 text-xs font-mono font-bold uppercase tracking-wider text-[#1769E0]">
+                  <div className="flex items-center gap-1.5 whitespace-nowrap">
+                    <CricketBallDoodle className="w-3.5 h-3.5 shrink-0 text-[#1769E0]" />
+                    <span>{formattedDate}</span>
+                  </div>
+                  <span className="text-[#8EC5FF] hidden sm:inline">•</span>
+                  <span className="whitespace-nowrap bg-[#EAF4FF] text-[#082B63] px-2.5 py-0.5 rounded-lg border border-[#8EC5FF]/70 text-[11px] font-semibold">
+                    {user.timezone}
+                  </span>
                 </div>
 
-                <div className="flex items-center gap-2 flex-wrap">
-                  <CrownDoodle className="w-5 h-5 text-[#F4C95D]" />
-                  <h1 className="text-2xl sm:text-3xl md:text-4xl font-handwriting font-bold text-[#082B63] tracking-tight flex items-center gap-2">
-                    <span>Rohit Sharma Fans</span>
+                <div className="flex items-center gap-2 flex-wrap pt-0.5">
+                  <CrownDoodle className="w-5 h-5 text-[#F4C95D] shrink-0" />
+                  <h1 className="text-2xl sm:text-3xl md:text-4xl font-handwriting font-bold text-[#082B63] tracking-tight flex items-center gap-2 flex-wrap">
+                    <span className="whitespace-nowrap">Rohit Sharma Fans</span>
                     <Number45Sticker size="sm" />
                   </h1>
                 </div>
 
-                <p className="text-xs sm:text-sm font-handwriting text-[#1769E0] mt-1 font-semibold">
+                <p className="text-xs sm:text-sm font-handwriting text-[#1769E0] font-semibold">
                   Plan your day like the Hitman — stay focused, stay consistent, keep winning.
                 </p>
 
                 {/* Fan badges */}
-                <div className="flex items-center gap-2 mt-3 flex-wrap">
-                  <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-handwriting font-bold bg-[#EAF4FF] text-[#082B63] border border-[#8EC5FF]">
-                    <CricketBatDoodle className="w-3.5 h-3.5" />
+                <div className="flex items-center gap-2 pt-1 flex-wrap">
+                  <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-handwriting font-bold bg-[#EAF4FF] text-[#082B63] border border-[#8EC5FF] whitespace-nowrap shadow-2xs">
+                    <CricketBatDoodle className="w-3.5 h-3.5 shrink-0" />
                     Hitman Mode ON 🔥
                   </span>
-                  <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-handwriting font-bold bg-[#FFF9E6] text-[#78350f] border border-[#F4C95D]">
-                    <TrophyDoodle className="w-3.5 h-3.5" />
+                  <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-handwriting font-bold bg-[#FFF9E6] text-[#78350f] border border-[#F4C95D] whitespace-nowrap shadow-2xs">
+                    <TrophyDoodle className="w-3.5 h-3.5 shrink-0" />
                     Small Steps. Big Innings.
                   </span>
-                  <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-handwriting font-bold bg-[#FFF0F5] text-[#9d174d] border border-[#F4B7C8]">
-                    <BlueHeartDoodle className="w-3.5 h-3.5" color="#ec4899" />
+                  <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-handwriting font-bold bg-[#FFF0F5] text-[#9d174d] border border-[#F4B7C8] whitespace-nowrap shadow-2xs">
+                    <BlueHeartDoodle className="w-3.5 h-3.5 shrink-0" color="#ec4899" />
                     45 — More than a Number
                   </span>
                 </div>
               </div>
             </div>
 
-            <div className="flex items-center gap-3 shrink-0">
+            <div className="flex items-center gap-2.5 flex-wrap sm:flex-nowrap shrink-0 w-full xl:w-auto pt-2 xl:pt-0">
               {onNavigateToPlanner && (
                 <button
                   type="button"
                   onClick={onNavigateToPlanner}
-                  className="flex items-center justify-center gap-2 px-4 py-2.5 sm:py-3 text-xs sm:text-sm font-handwriting font-bold text-[#082B63] bg-[#EAF4FF] hover:bg-[#D4E9FF] border-2 border-[#8EC5FF] rounded-2xl shadow-xs transition-all cursor-pointer hover:scale-105 active:scale-95"
+                  className="flex-1 sm:flex-initial flex items-center justify-center gap-2 px-4 py-2.5 sm:py-3 text-xs sm:text-sm font-handwriting font-bold text-[#082B63] bg-[#EAF4FF] hover:bg-[#D4E9FF] border-2 border-[#8EC5FF] rounded-2xl shadow-xs transition-all cursor-pointer hover:scale-[1.02] active:scale-95 whitespace-nowrap"
                   title="View 7-day Weekly Grid & Task History"
                 >
-                  <Calendar className="w-4 h-4 text-[#1769E0]" />
+                  <Calendar className="w-4 h-4 text-[#1769E0] shrink-0" />
                   <span>Weekly Planner →</span>
                 </button>
               )}
@@ -210,16 +233,20 @@ export const TodayDashboard: React.FC<TodayDashboardProps> = ({
               <button
                 id="quick-add-task-header-btn"
                 onClick={onOpenCreateModal}
-                className="flex items-center justify-center gap-2 px-5 py-2.5 sm:py-3 text-xs sm:text-sm font-handwriting font-bold text-white bg-[#1769E0] hover:bg-[#082B63] rounded-2xl shadow-md shadow-blue-600/30 transition-all cursor-pointer hover:scale-105 active:scale-95 shrink-0 border border-[#082B63]"
+                className="flex-1 sm:flex-initial flex items-center justify-center gap-2 px-5 py-2.5 sm:py-3 text-xs sm:text-sm font-handwriting font-bold text-white bg-[#1769E0] hover:bg-[#082B63] rounded-2xl shadow-md shadow-blue-600/30 transition-all cursor-pointer hover:scale-[1.02] active:scale-95 shrink-0 border border-[#082B63] whitespace-nowrap"
               >
-                <Plus className="w-4 h-4" /> + Add Task
+                <Plus className="w-4 h-4 shrink-0" />
+                <span>+ Add Task</span>
               </button>
             </div>
           </div>
 
           {/* Special Motivational Note: SUN WILL RAISE AGAIN + Smile every body smile :) */}
-          <div className="relative bg-white/90 rounded-2xl p-4 sm:p-5 border-2 border-[#8EC5FF]/80 shadow-xs">
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+          <div className="relative bg-white/90 rounded-2xl p-4 sm:p-5 border-2 border-[#8EC5FF]/80 shadow-xs overflow-hidden">
+            {/* Real Rohit Die-Cut Stickers (2 on Motivational Card) */}
+            <MainCardStickers leftPose="wave" rightPose="jersey_45_back" size={56} />
+
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 relative z-10">
               <div className="space-y-1">
                 <div className="flex items-center gap-2">
                   <RisingSunDoodle className="w-7 h-7" />
@@ -243,16 +270,20 @@ export const TodayDashboard: React.FC<TodayDashboardProps> = ({
             </div>
           </div>
 
+          {/* Real Rohit Sharma Sticker Album / Fan Showcase Strip */}
+          <RohitStickerShowcase className="pt-1" />
+
           {/* Cricket Scoreboard Quick Stats Metric Cards */}
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 pt-2">
             {/* Today's completion - Runs */}
-            <div className="rounded-[22px] p-4 bg-white border-2 border-[#8EC5FF] space-y-2 relative overflow-hidden shadow-xs hover:shadow-md transition-all">
+            <div className="rounded-[22px] p-4 bg-white border-2 border-[#8EC5FF] space-y-2 relative overflow-hidden shadow-xs hover:shadow-md transition-all group">
               <div className="flex items-center justify-between">
-                <span className="text-xs font-handwriting font-bold text-[#082B63] tracking-wide">
-                  Match Progress
+                <span className="text-xs font-handwriting font-bold text-[#082B63] tracking-wide flex items-center gap-1">
+                  <span>Match Progress</span>
+                  <span className="text-[10px] animate-hitman-twinkle">⚡</span>
                 </span>
                 <div className="w-7 h-7 rounded-lg bg-[#EAF4FF] flex items-center justify-center text-[#1769E0]">
-                  <Target className="w-4 h-4" />
+                  <AnimatedHitmanCrown className="w-4 h-4" />
                 </div>
               </div>
               <div className="flex items-baseline gap-1.5">
@@ -260,6 +291,9 @@ export const TodayDashboard: React.FC<TodayDashboardProps> = ({
                   {percentage}%
                 </span>
                 <span className="text-xs font-mono font-bold text-[#1769E0]">target</span>
+                {percentage >= 100 && (
+                  <span className="text-xs animate-hitman-six">🏆</span>
+                )}
               </div>
               <div className="w-full h-2.5 bg-[#EAF4FF] rounded-full overflow-hidden p-0.5 border border-[#8EC5FF]">
                 <div
@@ -272,11 +306,12 @@ export const TodayDashboard: React.FC<TodayDashboardProps> = ({
             {/* Completed - Boundaries */}
             <div className="rounded-[22px] p-4 bg-[#F0FFF4] border-2 border-[#86EFAC] space-y-2 relative overflow-hidden shadow-xs hover:shadow-md transition-all">
               <div className="flex items-center justify-between">
-                <span className="text-xs font-handwriting font-bold text-[#14532d] tracking-wide">
-                  Completed
+                <span className="text-xs font-handwriting font-bold text-[#14532d] tracking-wide flex items-center gap-1">
+                  <span>Completed</span>
+                  <span className="text-[10px] animate-hitman-twinkle">✨</span>
                 </span>
                 <div className="w-7 h-7 rounded-lg bg-[#DCFCE7] flex items-center justify-center text-[#16a34a]">
-                  <TrophyDoodle className="w-4 h-4" />
+                  <AnimatedHitmanTrophy className="w-4 h-4" />
                 </div>
               </div>
               <div className="flex items-baseline gap-1.5">
@@ -284,6 +319,9 @@ export const TodayDashboard: React.FC<TodayDashboardProps> = ({
                   {completedCount}
                 </span>
                 <span className="text-xs font-mono font-bold text-[#15803d]">of {totalCount} tasks</span>
+                {completedCount > 0 && (
+                  <AnimatedSixerBadge text="6" className="scale-75" />
+                )}
               </div>
               <p className="text-[11px] font-handwriting text-[#16a34a] font-bold flex items-center gap-1.5">
                 <span className="w-2 h-2 rounded-full bg-[#16a34a] animate-pulse" />
@@ -294,11 +332,12 @@ export const TodayDashboard: React.FC<TodayDashboardProps> = ({
             {/* Remaining - Overs */}
             <div className="rounded-[22px] p-4 bg-[#FFFDF7] border-2 border-[#F4C95D] space-y-2 relative overflow-hidden shadow-xs hover:shadow-md transition-all">
               <div className="flex items-center justify-between">
-                <span className="text-xs font-handwriting font-bold text-[#78350f] tracking-wide">
-                  Remaining
+                <span className="text-xs font-handwriting font-bold text-[#78350f] tracking-wide flex items-center gap-1">
+                  <span>Remaining</span>
+                  <AnimatedCricketBat className="w-3 h-3" />
                 </span>
                 <div className="w-7 h-7 rounded-lg bg-[#FEF3C7] flex items-center justify-center text-[#d97706]">
-                  <CricketBallDoodle className="w-4 h-4" />
+                  <AnimatedCricketBall className="w-4 h-4" />
                 </div>
               </div>
               <div className="flex items-baseline gap-1.5">
@@ -315,11 +354,12 @@ export const TodayDashboard: React.FC<TodayDashboardProps> = ({
             {/* Streak - Match Series */}
             <div className="rounded-[22px] p-4 bg-[#FFF5F7] border-2 border-[#F4B7C8] space-y-2 relative overflow-hidden shadow-xs hover:shadow-md transition-all">
               <div className="flex items-center justify-between">
-                <span className="text-xs font-handwriting font-bold text-[#9d174d] tracking-wide">
-                  Series Streak
+                <span className="text-xs font-handwriting font-bold text-[#9d174d] tracking-wide flex items-center gap-1">
+                  <span>Series Streak</span>
+                  <span className="text-xs animate-hitman-pull">🔥</span>
                 </span>
                 <div className="w-7 h-7 rounded-lg bg-[#FCE7F3] flex items-center justify-center text-[#db2777]">
-                  <Flame className="w-4 h-4" />
+                  <AnimatedJersey45Badge size="sm" />
                 </div>
               </div>
               <div className="flex items-baseline gap-1.5">
@@ -337,34 +377,85 @@ export const TodayDashboard: React.FC<TodayDashboardProps> = ({
           </div>
         </div>
       ) : (
-        /* NORMAL / OLD UI - Clean White Card with Cyber Metric Cards */
-        <div className="bg-white rounded-3xl p-6 sm:p-8 border border-slate-200/80 shadow-xs space-y-6">
-          <div className="flex flex-col md:flex-row md:items-center justify-between gap-5">
-            <div>
-              <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-slate-500 mb-1">
-                <Calendar className="w-3.5 h-3.5 text-blue-600" />
-                <span>{formattedDate}</span>
-                <span className="text-slate-300">•</span>
-                <span>{user.timezone}</span>
+        /* Cute Pastel Stationery Scrapbook Theme for Navya Sri */
+        <div className="relative bg-[#FFFDF7] rounded-[28px] p-6 sm:p-8 border-2 border-[#fbcfe8] shadow-[0_8px_30px_rgba(251,207,232,0.22)] space-y-6 overflow-hidden">
+          {/* Decorative washi tapes */}
+          <div className="absolute -top-1.5 left-10 z-10">
+            <WashiTape color="pink" angle={-3} className="w-24 h-5" />
+          </div>
+          <div className="absolute -top-1.5 right-12 z-10 hidden sm:block">
+            <WashiTape color="yellow" angle={4} className="w-20 h-4" />
+          </div>
+
+          {/* Header section */}
+          <div className="flex flex-col xl:flex-row xl:items-center justify-between gap-5 pt-2">
+            <div className="flex items-start gap-3 sm:gap-4 min-w-0 flex-1">
+              {/* Cute stationery Polaroid badge */}
+              <div className="relative bg-white p-2 rounded-2xl shadow-md border border-[#fbcfe8] -rotate-2 hover:rotate-0 transition-transform duration-300 shrink-0 hidden sm:block">
+                <div className="w-20 h-20 sm:w-24 sm:h-24 bg-gradient-to-br from-[#fff1f2] via-[#ffe4e6] to-[#fce7f3] rounded-xl flex flex-col items-center justify-center text-center p-2 border border-[#fecdd3]">
+                  <FlowerDoodle className="w-8 h-8 text-[#f43f5e]" />
+                  <span className="text-[10px] font-handwriting font-bold text-[#be123c] mt-1 whitespace-nowrap">
+                    Happy Day ✨
+                  </span>
+                </div>
+                <div className="text-center mt-1">
+                  <span className="font-handwriting font-bold text-[11px] text-[#881337] whitespace-nowrap">
+                    Navya Sri ♡
+                  </span>
+                </div>
               </div>
-              <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">
-                {getGreeting()}
-              </h1>
-              <div className="flex items-center gap-2 mt-2 text-xs sm:text-sm font-medium text-blue-600 bg-blue-50 px-3.5 py-1.5 rounded-full inline-flex border border-blue-100">
-                <Sparkles className="w-4 h-4 text-blue-600 shrink-0" />
-                <span>{motivation}</span>
+
+              <div className="min-w-0 flex-1 space-y-1.5">
+                <div className="flex items-center flex-wrap gap-x-2.5 gap-y-1 text-xs font-mono font-bold uppercase tracking-wider text-[#e11d48]">
+                  <div className="flex items-center gap-1.5 whitespace-nowrap">
+                    <HeartDoodle className="w-3.5 h-3.5 shrink-0" color="#f43f5e" />
+                    <span>{formattedDate}</span>
+                  </div>
+                  <span className="text-[#fda4af] hidden sm:inline">•</span>
+                  <span className="whitespace-nowrap bg-[#fff1f2] text-[#881337] px-2.5 py-0.5 rounded-lg border border-[#fda4af]/70 text-[11px] font-semibold">
+                    {user.timezone}
+                  </span>
+                </div>
+
+                <div className="flex items-center gap-2 flex-wrap pt-0.5">
+                  <SparkleDoodle className="w-5 h-5 text-[#f59e0b] shrink-0" color="#f59e0b" />
+                  <h1 className="text-2xl sm:text-3xl md:text-4xl font-handwriting font-bold text-[#881337] tracking-tight flex items-center gap-2 flex-wrap">
+                    <span className="whitespace-nowrap">Hello, {user.name || 'Navya Sri'}</span>
+                    <HeartDoodle className="w-5 h-5 text-[#f43f5e] shrink-0" color="#f43f5e" />
+                  </h1>
+                </div>
+
+                <p className="text-xs sm:text-sm font-handwriting text-[#e11d48] font-semibold">
+                  Organize your goals, celebrate every win, and smile brightly today ♡
+                </p>
+
+                {/* Cute pastel badges */}
+                <div className="flex items-center gap-2 pt-1 flex-wrap">
+                  <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-handwriting font-bold bg-[#fff1f2] text-[#9f1239] border border-[#fecdd3] whitespace-nowrap shadow-2xs">
+                    <FlowerDoodle className="w-3.5 h-3.5 shrink-0" />
+                    Cute Stationery Mode 🌸
+                  </span>
+                  <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-handwriting font-bold bg-[#fffdf7] text-[#9a3412] border border-[#fed7aa] whitespace-nowrap shadow-2xs">
+                    <SparkleDoodle className="w-3.5 h-3.5 shrink-0" color="#ea580c" />
+                    Small steps, big dreams
+                  </span>
+                  <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-handwriting font-bold bg-[#faf5ff] text-[#6b21a8] border border-[#e9d5ff] whitespace-nowrap shadow-2xs">
+                    <BowDoodle className="w-4 h-3.5 shrink-0" color="#a855f7" />
+                    Stay Radiant & Happy ✨
+                  </span>
+                </div>
               </div>
             </div>
 
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-2.5 flex-wrap sm:flex-nowrap shrink-0 w-full xl:w-auto pt-2 xl:pt-0">
               {onNavigateToPlanner && (
                 <button
                   type="button"
                   onClick={onNavigateToPlanner}
-                  className="flex items-center justify-center gap-2 px-4 py-2.5 sm:py-3 text-xs sm:text-sm font-medium text-slate-700 bg-slate-50 hover:bg-slate-100 border border-slate-200 rounded-xl transition-all cursor-pointer"
+                  className="flex-1 sm:flex-initial flex items-center justify-center gap-2 px-4 py-2.5 sm:py-3 text-xs sm:text-sm font-handwriting font-bold text-[#881337] bg-[#fff1f2] hover:bg-[#ffe4e6] border-2 border-[#fda4af] rounded-2xl shadow-xs transition-all cursor-pointer hover:scale-[1.02] active:scale-95 whitespace-nowrap"
                   title="View 7-day Weekly Grid & Task History"
                 >
-                  <Calendar className="w-4 h-4 text-slate-500" />
+                  <Calendar className="w-4 h-4 text-[#f43f5e] shrink-0" />
                   <span>Weekly Planner →</span>
                 </button>
               )}
@@ -372,113 +463,148 @@ export const TodayDashboard: React.FC<TodayDashboardProps> = ({
               <button
                 id="quick-add-task-header-btn"
                 onClick={onOpenCreateModal}
-                className="flex items-center justify-center gap-2 px-5 py-2.5 sm:py-3 text-xs sm:text-sm font-semibold text-white bg-blue-600 hover:bg-blue-700 rounded-xl shadow-sm transition-all cursor-pointer hover:scale-105 active:scale-95 shrink-0"
+                className="flex-1 sm:flex-initial flex items-center justify-center gap-2 px-5 py-2.5 sm:py-3 text-xs sm:text-sm font-handwriting font-bold text-white bg-[#f43f5e] hover:bg-[#e11d48] rounded-2xl shadow-md shadow-rose-400/30 transition-all cursor-pointer hover:scale-[1.02] active:scale-95 shrink-0 border border-[#be123c] whitespace-nowrap"
               >
-                <Plus className="w-4 h-4" /> Add Task
+                <Plus className="w-4 h-4 shrink-0" />
+                <span>+ Add Task</span>
               </button>
             </div>
           </div>
 
-          {/* Real-time Metric Cards - Cyber Glowing Rotating Cards */}
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 pt-6 border-t border-slate-100">
-            {/* Progress */}
-            <div className="cyber-metric-card">
-              <div className="card__border" />
-              <div className="card__content">
-                <div className="flex items-center justify-between">
-                  <span className="text-xs font-medium text-slate-400">Progress</span>
-                  <div className="w-7 h-7 rounded-lg bg-cyan-950/60 border border-cyan-800/50 flex items-center justify-center text-cyan-400">
-                    <Target className="w-4 h-4" />
-                  </div>
+          {/* Motivational Quote Banner */}
+          <div className="relative bg-white/90 rounded-2xl p-4 sm:p-5 border-2 border-[#fbcfe8] shadow-xs">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+              <div className="space-y-1">
+                <div className="flex items-center gap-2">
+                  <FlowerDoodle className="w-6 h-6 text-[#f43f5e]" />
+                  <h2 className="text-xl sm:text-2xl font-handwriting font-bold text-[#881337] tracking-wide">
+                    "One day at a time, you are doing wonderful ♡"
+                  </h2>
                 </div>
-                <div className="my-1.5">
-                  <div className="flex items-baseline gap-1.5">
-                    <span className="text-2xl sm:text-3xl font-extrabold text-white">{percentage}%</span>
-                    <span className="text-xs font-semibold text-cyan-400">done</span>
-                  </div>
-                  <div className="w-full h-1.5 bg-slate-800 rounded-full mt-2 overflow-hidden">
-                    <div
-                      className="h-full bg-cyan-400 rounded-full transition-all duration-500"
-                      style={{ width: `${Math.min(100, Math.max(0, percentage))}%` }}
-                    />
-                  </div>
+                <p className="text-xs sm:text-sm font-handwriting text-[#e11d48] font-semibold">
+                  Every small task completed is a step toward your happiest self.
+                </p>
+              </div>
+
+              <div className="bg-[#fff1f2] border-2 border-[#fda4af] rounded-xl px-4 py-2 rotate-1 shadow-xs shrink-0 self-start sm:self-auto">
+                <p className="font-handwriting font-bold text-xs sm:text-sm text-[#9f1239] flex items-center gap-1.5">
+                  <span>"Glow, grow, and smile ✨"</span>
+                  <HeartDoodle className="w-3.5 h-3.5" color="#f43f5e" />
+                </p>
+                <span className="text-[10px] font-mono text-[#be123c]">Daily Note for Navya</span>
+              </div>
+            </div>
+          </div>
+
+          {/* Pastel Stationery Metric Cards */}
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 pt-2">
+            {/* Daily Progress */}
+            <div className="rounded-[22px] p-4 bg-white border-2 border-[#fbcfe8] space-y-2 relative overflow-hidden shadow-xs hover:shadow-md transition-all group">
+              <div className="flex items-center justify-between">
+                <span className="text-xs font-handwriting font-bold text-[#881337] tracking-wide flex items-center gap-1">
+                  <span>Daily Progress</span>
+                  <SparkleDoodle className="w-3 h-3 text-[#f59e0b]" color="#f59e0b" />
+                </span>
+                <div className="w-7 h-7 rounded-lg bg-[#fff1f2] flex items-center justify-center text-[#f43f5e]">
+                  <Target className="w-4 h-4" />
                 </div>
+              </div>
+              <div className="flex items-baseline gap-1.5">
+                <span className="text-2xl sm:text-3xl font-handwriting font-bold text-[#881337]">
+                  {percentage}%
+                </span>
+                <span className="text-xs font-mono font-bold text-[#e11d48]">completed</span>
+                {percentage >= 100 && (
+                  <span className="text-xs animate-bounce">🌸</span>
+                )}
+              </div>
+              <div className="w-full h-2.5 bg-[#fff1f2] rounded-full overflow-hidden p-0.5 border border-[#fecdd3]">
+                <div
+                  className="h-full bg-linear-to-r from-[#fda4af] to-[#f43f5e] rounded-full transition-all duration-500 shadow-xs"
+                  style={{ width: `${Math.min(100, Math.max(0, percentage))}%` }}
+                />
               </div>
             </div>
 
             {/* Completed */}
-            <div className="cyber-metric-card">
-              <div className="card__border" />
-              <div className="card__content">
-                <div className="flex items-center justify-between">
-                  <span className="text-xs font-medium text-slate-400">Completed</span>
-                  <div className="w-7 h-7 rounded-lg bg-emerald-950/60 border border-emerald-800/50 flex items-center justify-center text-emerald-400">
-                    <CheckCircle2 className="w-4 h-4" />
-                  </div>
-                </div>
-                <div className="my-1.5">
-                  <div className="flex items-baseline gap-1.5">
-                    <span className="text-2xl sm:text-3xl font-extrabold text-white">{completedCount}</span>
-                    <span className="text-xs font-medium text-slate-400">of {totalCount}</span>
-                  </div>
-                  <p className="text-[11px] text-emerald-400 font-semibold flex items-center gap-1.5 mt-2">
-                    <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
-                    PostgreSQL Synced
-                  </p>
+            <div className="rounded-[22px] p-4 bg-[#F0FFF4] border-2 border-[#86EFAC] space-y-2 relative overflow-hidden shadow-xs hover:shadow-md transition-all">
+              <div className="flex items-center justify-between">
+                <span className="text-xs font-handwriting font-bold text-[#14532d] tracking-wide flex items-center gap-1">
+                  <span>Completed</span>
+                  <HeartDoodle className="w-3 h-3 text-[#16a34a]" color="#16a34a" />
+                </span>
+                <div className="w-7 h-7 rounded-lg bg-[#DCFCE7] flex items-center justify-center text-[#16a34a]">
+                  <TrophyDoodle className="w-4 h-4" />
                 </div>
               </div>
+              <div className="flex items-baseline gap-1.5">
+                <span className="text-2xl sm:text-3xl font-handwriting font-bold text-[#14532d]">
+                  {completedCount}
+                </span>
+                <span className="text-xs font-mono font-bold text-[#15803d]">of {totalCount} tasks</span>
+              </div>
+              <p className="text-[11px] font-handwriting text-[#16a34a] font-bold flex items-center gap-1.5">
+                <span className="w-2 h-2 rounded-full bg-[#16a34a] animate-pulse" />
+                You are doing great! ✨
+              </p>
             </div>
 
             {/* Remaining */}
-            <div className="cyber-metric-card">
-              <div className="card__border" />
-              <div className="card__content">
-                <div className="flex items-center justify-between">
-                  <span className="text-xs font-medium text-slate-400">Remaining</span>
-                  <div className="w-7 h-7 rounded-lg bg-amber-950/60 border border-amber-800/50 flex items-center justify-center text-amber-400">
-                    <Clock className="w-4 h-4" />
-                  </div>
-                </div>
-                <div className="my-1.5">
-                  <div className="flex items-baseline gap-1.5">
-                    <span className="text-2xl sm:text-3xl font-extrabold text-white">{remainingCount}</span>
-                    <span className="text-xs font-medium text-slate-400">pending</span>
-                  </div>
-                  <p className="text-[11px] text-amber-400 font-semibold mt-2">
-                    Target today
-                  </p>
+            <div className="rounded-[22px] p-4 bg-[#FFFDF7] border-2 border-[#fed7aa] space-y-2 relative overflow-hidden shadow-xs hover:shadow-md transition-all">
+              <div className="flex items-center justify-between">
+                <span className="text-xs font-handwriting font-bold text-[#78350f] tracking-wide flex items-center gap-1">
+                  <span>Remaining</span>
+                  <Clock className="w-3 h-3 text-[#ea580c]" />
+                </span>
+                <div className="w-7 h-7 rounded-lg bg-[#fff7ed] flex items-center justify-center text-[#ea580c]">
+                  <Clock className="w-4 h-4" />
                 </div>
               </div>
+              <div className="flex items-baseline gap-1.5">
+                <span className="text-2xl sm:text-3xl font-handwriting font-bold text-[#78350f]">
+                  {remainingCount}
+                </span>
+                <span className="text-xs font-mono font-bold text-[#b45309]">in progress</span>
+              </div>
+              <p className="text-[11px] font-handwriting text-[#b45309] font-bold">
+                Take it easy, step by step ♡
+              </p>
             </div>
 
             {/* Streak */}
-            <div className="cyber-metric-card">
-              <div className="card__border" />
-              <div className="card__content">
-                <div className="flex items-center justify-between">
-                  <span className="text-xs font-medium text-slate-400">Streak</span>
-                  <div className="w-7 h-7 rounded-lg bg-orange-950/60 border border-orange-800/50 flex items-center justify-center text-orange-400">
-                    <Flame className="w-4 h-4" />
-                  </div>
-                </div>
-                <div className="my-1.5">
-                  <div className="flex items-baseline gap-1.5">
-                    <span className="text-2xl sm:text-3xl font-extrabold text-white">{streak > 0 ? streak : 0}</span>
-                    <span className="text-xs font-semibold text-orange-400">{streak > 0 ? 'Days 🔥' : 'Days'}</span>
-                  </div>
-                  <p className="text-[11px] text-slate-400 font-medium mt-2">
-                    Continuous days
-                  </p>
+            <div className="rounded-[22px] p-4 bg-[#FFF5F7] border-2 border-[#F4B7C8] space-y-2 relative overflow-hidden shadow-xs hover:shadow-md transition-all">
+              <div className="flex items-center justify-between">
+                <span className="text-xs font-handwriting font-bold text-[#9d174d] tracking-wide flex items-center gap-1">
+                  <span>Daily Streak</span>
+                  <Flame className="w-3.5 h-3.5 text-[#db2777]" />
+                </span>
+                <div className="w-7 h-7 rounded-lg bg-[#FCE7F3] flex items-center justify-center text-[#db2777]">
+                  <Flame className="w-4 h-4" />
                 </div>
               </div>
+              <div className="flex items-baseline gap-1.5">
+                <span className="text-2xl sm:text-3xl font-handwriting font-bold text-[#9d174d]">
+                  {streak > 0 ? streak : 0}
+                </span>
+                <span className="text-xs font-mono font-bold text-[#be185d]">
+                  {streak > 0 ? 'Days ✨' : 'Days'}
+                </span>
+              </div>
+              <p className="text-[11px] font-handwriting text-[#be185d] font-bold">
+                Consistency is magic ♡
+              </p>
             </div>
           </div>
         </div>
       )}
 
       {/* 7-DAY PRODUCTIVITY GRAPH */}
-      <div className="bg-white rounded-3xl p-6 md:p-8 border border-slate-100 shadow-xs">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-6">
+      <div className="bg-white rounded-3xl p-6 md:p-8 border border-slate-100 shadow-xs relative overflow-hidden">
+        {/* Real Rohit Die-Cut Stickers on Main Weekly Productivity Card */}
+        {isRohit && (
+          <MainCardStickers leftPose="bat_raise" rightPose="upper_cut" size={64} />
+        )}
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-6 relative z-10">
           <div>
             <h2 className="text-lg font-bold text-slate-900 tracking-tight flex items-center gap-2">
               <TrendingUp className="w-5 h-5 text-blue-600" /> Weekly Productivity
@@ -616,43 +742,56 @@ export const TodayDashboard: React.FC<TodayDashboardProps> = ({
         </button>
       </div>
 
+      {/* WEEKLY HABIT TRACKER GRID FOR RECURRING TASKS */}
+      <HabitTracker userEmail={user?.email} />
+
       {/* TODAY'S TASKS & UPCOMING REMINDERS */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 items-start">
         {/* Main Tasks List (2 cols) */}
         <div
-          className={`rounded-3xl p-4 sm:p-6 md:p-8 space-y-4 lg:col-span-2 ${
-            isSpecial
+          className={`rounded-3xl p-4 sm:p-6 md:p-8 space-y-4 lg:col-span-2 relative overflow-hidden ${
+            isRohit
               ? 'bg-[#FFFDF7] border-2 border-[#8EC5FF] shadow-xs'
-              : 'bg-white border border-slate-100 shadow-xs'
+              : 'bg-[#FFFDF7] border-2 border-[#fbcfe8] shadow-[0_8px_30px_rgba(251,207,232,0.18)]'
           } ${
             mobileTab === 'reminders' ? 'hidden lg:block' : 'block'
           }`}
         >
+          {/* Real Rohit Die-Cut Stickers (2 on Today's Tasks Container) - Strictly Rohit only */}
+          {isRohit && (
+            <MainCardStickers leftPose="helmet_century" rightPose="knee_slide" size={58} />
+          )}
+
           <div
-            className={`flex items-center justify-between pb-4 ${
-              isSpecial ? 'border-b-2 border-[#8EC5FF]/50' : 'border-b border-slate-100'
+            className={`flex items-center justify-between pb-4 relative z-10 ${
+              isRohit ? 'border-b-2 border-[#8EC5FF]/50' : 'border-b-2 border-[#fbcfe8]/60'
             }`}
           >
             <div className="flex items-center gap-2">
               <h2
                 className={`text-lg font-bold tracking-tight flex items-center gap-2 ${
-                  isSpecial ? 'font-handwriting text-[#082B63] text-xl' : 'text-slate-900'
+                  isRohit
+                    ? 'font-handwriting text-[#082B63] text-xl'
+                    : 'font-handwriting text-[#881337] text-xl'
                 }`}
               >
-                {isSpecial ? (
+                {isRohit ? (
                   <>
                     <CricketBatDoodle className="w-5 h-5 text-[#1769E0]" />
                     <span>Today's Hitman Tasks</span>
                   </>
                 ) : (
-                  "Today's Tasks"
+                  <>
+                    <FlowerDoodle className="w-5 h-5 text-[#f43f5e]" />
+                    <span>Today's Tasks ♡</span>
+                  </>
                 )}
               </h2>
               <span
                 className={`text-xs font-semibold px-2.5 py-0.5 rounded-full ${
-                  isSpecial
+                  isRohit
                     ? 'bg-[#EAF4FF] text-[#082B63] font-mono font-bold border border-[#8EC5FF]'
-                    : 'bg-slate-100 text-slate-700'
+                    : 'bg-[#fff1f2] text-[#881337] font-handwriting font-bold border border-[#fecdd3]'
                 }`}
               >
                 {filteredTasks.length}
@@ -661,19 +800,23 @@ export const TodayDashboard: React.FC<TodayDashboardProps> = ({
             <button
               onClick={onOpenCreateModal}
               className={`text-xs font-semibold flex items-center gap-1.5 px-3 py-1.5 rounded-xl transition-all cursor-pointer ${
-                isSpecial
+                isRohit
                   ? 'bg-[#1769E0] hover:bg-[#082B63] text-white font-handwriting font-bold shadow-xs'
-                  : 'text-blue-600 hover:text-blue-700 bg-blue-50/70 hover:bg-blue-50'
+                  : 'bg-linear-to-r from-[#f43f5e] to-[#e11d48] hover:from-[#e11d48] hover:to-[#be123c] text-white font-handwriting font-bold shadow-xs border border-[#be123c]'
               }`}
             >
-              <Plus className="w-3.5 h-3.5" /> {isSpecial ? '+ New Task' : 'Add Task'}
+              <Plus className="w-3.5 h-3.5" /> {isRohit ? '+ New Task' : '+ Add Task ♡'}
             </button>
           </div>
 
           {/* Mobile & Desktop Responsive Search & Filter Bar */}
           <div className="w-full space-y-2.5">
             <div className="relative flex items-center w-full">
-              <div className="absolute left-3.5 pointer-events-none text-slate-400">
+              <div
+                className={`absolute left-3.5 pointer-events-none ${
+                  isRohit ? 'text-[#1769E0]/50' : 'text-[#f43f5e]/60'
+                }`}
+              >
                 <Search className="w-4 h-4" />
               </div>
               <input
@@ -682,12 +825,14 @@ export const TodayDashboard: React.FC<TodayDashboardProps> = ({
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 placeholder={
-                  isSpecial ? 'What do you want to do today?' : "Search today's tasks..."
+                  isRohit
+                    ? 'What do you want to do today?'
+                    : "Search or plan today's tasks ♡..."
                 }
                 className={`w-full text-sm font-medium pl-10 pr-24 py-2.5 sm:py-3 rounded-2xl transition-all outline-none ${
-                  isSpecial
+                  isRohit
                     ? 'bg-white border-2 border-[#8EC5FF] focus:border-[#1769E0] text-[#082B63] placeholder:text-[#1769E0]/50 font-handwriting text-base'
-                    : 'bg-slate-50 hover:bg-slate-100/80 focus:bg-white text-slate-900 placeholder:text-slate-400 border border-slate-200/80 focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10'
+                    : 'bg-[#fffdfa] border-2 border-[#fecdd3] focus:border-[#f43f5e] text-[#881337] placeholder:text-[#fda4af] font-handwriting text-base'
                 }`}
               />
               <div className="absolute right-2.5 flex items-center gap-1">
@@ -801,27 +946,34 @@ export const TodayDashboard: React.FC<TodayDashboardProps> = ({
 
           {filteredTasks.length > 0 ? (
             <div className="space-y-2.5">
-              {filteredTasks.map((todo) => {
+              {filteredTasks.map((todo, taskIndex) => {
                 const dueInfo = checkTaskTimeCompleted(todo, user.timezone);
                 const isAlerting = dueInfo.isDue && !todo.completed;
 
                 return (
                   <div
                     key={todo.id}
-                    className={`group flex items-start justify-between gap-2.5 sm:gap-3 p-3 sm:p-4 rounded-2xl border transition-all ${
-                      isSpecial
+                    className={`group flex items-start justify-between gap-2.5 sm:gap-3 p-3 sm:p-4 rounded-2xl border transition-all relative overflow-hidden ${
+                      isRohit
                         ? todo.completed
-                          ? 'bg-[#F0FFF4] border-[#86EFAC] text-[#15803d]/80 shadow-2xs'
+                          ? 'bg-[#F0FFF4] border-2 border-[#86EFAC] text-[#15803d]/80 shadow-2xs'
                           : isAlerting
-                          ? 'bg-[#FFF5F7] border-[#dc2626] ring-2 ring-red-200 shadow-md'
-                          : 'bg-white border-2 border-[#8EC5FF] hover:border-[#1769E0] shadow-xs'
+                          ? 'bg-[#FFF5F7] border-2 border-[#dc2626] ring-2 ring-red-200 shadow-md'
+                          : 'bg-white border-2 border-[#8EC5FF] hover:border-[#1769E0] hover:shadow-md'
                         : todo.completed
-                        ? 'bg-slate-50/70 border-slate-100 text-slate-400'
+                        ? 'bg-[#fff1f2]/60 border-2 border-[#fecdd3] text-[#881337]/60 shadow-2xs'
                         : isAlerting
-                        ? 'bg-[#fff5f7] border-[#f43f5e] ring-2 ring-rose-200 shadow-md shadow-rose-500/15'
-                        : 'bg-white border-slate-200/80 hover:border-slate-300 hover:shadow-xs'
+                        ? 'bg-[#FFF5F7] border-2 border-[#dc2626] ring-2 ring-red-200 shadow-md'
+                        : 'bg-white border-2 border-[#fbcfe8] hover:border-[#f43f5e] hover:shadow-sm'
                     }`}
                   >
+                    {/* Subtle Hitman Watermark on hover for Rohit users only */}
+                    {isRohit && !todo.completed && (
+                      <div className="absolute right-2 -bottom-2 text-[32px] opacity-10 pointer-events-none group-hover:opacity-25 transition-opacity font-mono font-black select-none text-[#1769E0]">
+                        45
+                      </div>
+                    )}
+
                     <div className="flex items-start gap-3 min-w-0 flex-1">
                       <div className="mt-0.5 shrink-0 flex items-center">
                         <TaskToggle
@@ -835,26 +987,41 @@ export const TodayDashboard: React.FC<TodayDashboardProps> = ({
                       <div className="min-w-0 flex-1">
                         <div className="flex items-center gap-2 flex-wrap">
                           <p
-                            className={`text-sm truncate ${
-                              isSpecial
-                                ? `font-handwriting font-bold text-base ${
-                                    todo.completed
-                                      ? 'line-through text-[#15803d]/70'
-                                      : 'text-[#082B63]'
-                                  }`
-                                : `font-semibold text-slate-900 ${
-                                    todo.completed ? 'line-through text-slate-400' : ''
-                                  }`
+                            className={`text-sm truncate font-handwriting font-bold text-base ${
+                              isRohit
+                                ? todo.completed
+                                  ? 'line-through text-[#15803d]/70'
+                                  : 'text-[#082B63]'
+                                : todo.completed
+                                ? 'line-through text-[#881337]/50'
+                                : 'text-[#881337]'
                             }`}
                           >
                             {todo.title}
                           </p>
 
-                          {/* Hitman Completed Badge */}
-                          {isSpecial && todo.completed && (
-                            <span className="inline-flex items-center gap-1 bg-[#DCFCE7] text-[#16a34a] font-handwriting font-bold text-[11px] px-2 py-0.5 rounded-md border border-[#86EFAC]">
+                          {/* Animated Hitman Emoji Row on Card for Rohit users only */}
+                          {isRohit && (
+                            <HitmanCardEmojiRow
+                              taskIndex={taskIndex}
+                              completed={todo.completed}
+                              isAlerting={isAlerting}
+                            />
+                          )}
+
+                          {/* Hitman Completed Badge - Strictly for Rohit */}
+                          {isRohit && todo.completed && (
+                            <span className="inline-flex items-center gap-1 bg-[#DCFCE7] text-[#16a34a] font-handwriting font-bold text-[11px] px-2 py-0.5 rounded-md border border-[#86EFAC] animate-hitman-pull">
                               <TrophyDoodle className="w-3 h-3 text-[#eab308]" />
                               Hitman mentality — DONE! 🔥💙
+                            </span>
+                          )}
+
+                          {/* Sweet Stationery Completed Badge - For Navya Sri */}
+                          {!isRohit && todo.completed && (
+                            <span className="inline-flex items-center gap-1 bg-[#fff1f2] text-[#be123c] font-handwriting font-bold text-[11px] px-2 py-0.5 rounded-md border border-[#fecdd3]">
+                              <HeartDoodle className="w-3 h-3 text-[#f43f5e]" color="#f43f5e" />
+                              Completed with love ♡
                             </span>
                           )}
 
@@ -873,6 +1040,26 @@ export const TodayDashboard: React.FC<TodayDashboardProps> = ({
                         )}
 
                         <div className="flex items-center gap-1.5 mt-2 flex-wrap text-[11px]">
+                          {/* Animated Hitman Card Mini Badge for priority & flavor */}
+                          {isRohit && !todo.completed && (
+                            <HitmanCardMiniBadge
+                              type={
+                                todo.priority === 'high'
+                                  ? 'pullshot'
+                                  : todo.priority === 'medium'
+                                  ? 'sixer'
+                                  : 'bat'
+                              }
+                              label={
+                                todo.priority === 'high'
+                                  ? 'Pull Shot Power'
+                                  : todo.priority === 'medium'
+                                  ? 'Sixer Timing'
+                                  : 'Middle the Ball'
+                              }
+                            />
+                          )}
+
                           {todo.dueTime && (
                             <span className="inline-flex items-center gap-1 text-slate-600 bg-slate-100 px-2 py-0.5 rounded-md font-medium">
                               <Clock className="w-3 h-3 text-slate-400" /> {todo.dueTime}
@@ -920,15 +1107,29 @@ export const TodayDashboard: React.FC<TodayDashboardProps> = ({
                       </div>
                     </div>
 
-                    <div className="flex items-center gap-1 shrink-0">
+                    <div className="flex items-center gap-1.5 shrink-0">
+                      {/* Real Die-Cut Sticker for each Task Card */}
+                      {isRohit && (
+                        <CardStickerBadge
+                          taskIndex={taskIndex}
+                          completed={todo.completed}
+                          size={42}
+                          className="shrink-0 transition-transform group-hover:scale-125"
+                        />
+                      )}
+
                       <button
                         id={`focus-task-btn-${todo.id}`}
                         type="button"
                         onClick={() => onFocusTask(todo)}
-                        className="flex items-center gap-1 px-2 sm:px-2.5 py-1.5 rounded-xl text-xs font-semibold text-blue-700 bg-blue-50 hover:bg-blue-100 hover:text-blue-800 border border-blue-200/70 transition-all cursor-pointer shadow-2xs"
+                        className={`flex items-center gap-1 px-2 sm:px-2.5 py-1.5 rounded-xl text-xs font-semibold transition-all cursor-pointer shadow-2xs ${
+                          isRohit
+                            ? 'text-blue-700 bg-blue-50 hover:bg-blue-100 hover:text-blue-800 border border-blue-200/70'
+                            : 'text-[#be123c] bg-[#fff1f2] hover:bg-[#ffe4e6] hover:text-[#881337] border border-[#fecdd3]'
+                        }`}
                         title="Activate Focus Mode with Pomodoro Timer"
                       >
-                        <Target className="w-3.5 h-3.5 text-blue-600 shrink-0" />
+                        <Target className={`w-3.5 h-3.5 shrink-0 ${isRohit ? 'text-blue-600' : 'text-[#f43f5e]'}`} />
                         <span className="hidden sm:inline">Focus</span>
                       </button>
 
@@ -988,23 +1189,64 @@ export const TodayDashboard: React.FC<TodayDashboardProps> = ({
 
         {/* Upcoming Reminders Card (1 col on desktop, tab/accordion on mobile) */}
         <div
-          className={`bg-white rounded-3xl p-4 sm:p-6 border border-slate-100 shadow-xs space-y-4 flex flex-col justify-between ${
+          className={`rounded-3xl p-4 sm:p-6 space-y-4 flex flex-col justify-between relative overflow-hidden ${
+            isRohit
+              ? 'bg-white border border-slate-100 shadow-xs'
+              : 'bg-[#FFFDF7] border-2 border-[#fbcfe8] shadow-[0_8px_30px_rgba(251,207,232,0.18)]'
+          } ${
             mobileTab === 'tasks' ? 'hidden lg:flex' : 'flex'
           }`}
         >
-          <div className="space-y-4">
-            <div className="flex items-center justify-between border-b border-slate-100 pb-3">
+          {/* Real Rohit Die-Cut Stickers (2 on Upcoming Reminders Card) - Strictly Rohit only */}
+          {isRohit && (
+            <MainCardStickers leftPose="pull_shot" rightPose="trophy" size={52} />
+          )}
+
+          <div className="space-y-4 relative z-10">
+            <div
+              className={`flex items-center justify-between pb-3 ${
+                isRohit ? 'border-b border-slate-100' : 'border-b-2 border-[#fce7f3]'
+              }`}
+            >
               <div className="flex items-center gap-2">
-                <div className="w-7 h-7 rounded-lg bg-blue-50 text-blue-600 flex items-center justify-center">
+                <div
+                  className={`w-7 h-7 rounded-xl flex items-center justify-center ${
+                    isRohit
+                      ? 'bg-blue-50 text-blue-600'
+                      : 'bg-[#fff1f2] text-[#f43f5e] border border-[#fecdd3]'
+                  }`}
+                >
                   <Bell className="w-4 h-4" />
                 </div>
                 <div>
-                  <h3 className="text-sm font-bold text-slate-900 tracking-tight">Upcoming Reminders</h3>
-                  <p className="text-[10px] text-slate-400 font-medium">Scheduled email alerts</p>
+                  <h3
+                    className={`text-sm font-bold tracking-tight ${
+                      isRohit ? 'text-slate-900' : 'font-handwriting text-base text-[#881337]'
+                    }`}
+                  >
+                    {isRohit ? 'Upcoming Reminders' : 'Upcoming Reminders ♡'}
+                  </h3>
+                  <p
+                    className={`text-[10px] font-medium ${
+                      isRohit ? 'text-slate-400' : 'text-[#9f1239]/70 font-cute'
+                    }`}
+                  >
+                    Scheduled email alerts
+                  </p>
                 </div>
               </div>
-              <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200 flex items-center gap-1">
-                <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+              <span
+                className={`text-[10px] font-bold px-2 py-0.5 rounded-full flex items-center gap-1 ${
+                  isRohit
+                    ? 'bg-emerald-50 text-emerald-700 border border-emerald-200'
+                    : 'bg-[#fff1f2] text-[#be123c] border border-[#fecdd3] font-handwriting'
+                }`}
+              >
+                <span
+                  className={`w-1.5 h-1.5 rounded-full animate-pulse ${
+                    isRohit ? 'bg-emerald-500' : 'bg-[#f43f5e]'
+                  }`}
+                />
                 Active
               </span>
             </div>

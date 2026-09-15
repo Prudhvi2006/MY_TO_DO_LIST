@@ -29,7 +29,7 @@ import { TaskModal } from './components/TaskModal.tsx';
 import { FocusModeView } from './components/FocusModeView.tsx';
 import { NeonSpinner } from './components/NeonSpinner.tsx';
 import { AstronautCelebrationModal } from './components/AstronautCelebrationModal.tsx';
-import { CalendarDoodle, HeartDoodle, SparkleDoodle } from './components/PlannerDoodles.tsx';
+import { CalendarDoodle, HeartDoodle, SparkleDoodle, FlowerDoodle, BowDoodle, WashiTape } from './components/PlannerDoodles.tsx';
 import {
   CricketBallDoodle,
   CricketBatDoodle,
@@ -39,7 +39,7 @@ import {
   BlueHeartDoodle,
 } from './components/CricketDoodles.tsx';
 import { DueTaskNotificationBanner } from './components/DueTaskNotificationBanner.tsx';
-import { isSpecialUser, isSpecialAstronautUser } from './lib/userTheme.ts';
+import { isRohitUser, isNavyaUser, isSpecialUser, isSpecialAstronautUser } from './lib/userTheme.ts';
 import { AppLogo } from './components/AppLogo.tsx';
 import {
   syncUserProfileToFirestore,
@@ -62,7 +62,7 @@ export default function App() {
     } catch (e) {
       // ignore
     }
-    return 'planner'; // Default to Weekly Planner so redesigned stationery page is immediately visible
+    return 'dashboard'; // Default to Today's Dashboard first as requested
   });
 
   const handleTabChange = (tab: 'dashboard' | 'planner' | 'analytics' | 'settings') => {
@@ -433,19 +433,24 @@ export default function App() {
     );
   }
 
-  const isSpecial = isSpecialUser(currentUser?.email);
+  const isRohit = isRohitUser(currentUser?.email);
+  const isNavya = isNavyaUser(currentUser?.email);
 
   return (
     <div
       id="production-app-root"
       className={`min-h-screen text-slate-900 flex flex-col md:flex-row ${
-        isSpecial ? 'bg-rohit-paper' : 'bg-slate-50/70'
+        isRohit ? 'bg-rohit-paper' : 'bg-[#FFFDF7]'
       }`}
     >
       {/* Toast Notification Banner */}
       {toast && (
-        <div className="fixed bottom-6 right-6 z-50 flex items-center gap-2.5 px-4 py-3 bg-slate-900 text-white rounded-2xl shadow-xl border border-slate-700 text-xs animate-slide-up">
-          <BellRing className="w-4 h-4 text-blue-400 shrink-0" />
+        <div className={`fixed bottom-6 right-6 z-50 flex items-center gap-2.5 px-4 py-3 rounded-2xl shadow-xl text-xs animate-slide-up ${
+          isRohit
+            ? 'bg-[#082B63] text-white border-2 border-[#8EC5FF] font-handwriting font-bold'
+            : 'bg-[#881337] text-white border-2 border-[#fbcfe8] font-handwriting font-bold'
+        }`}>
+          <BellRing className={`w-4 h-4 shrink-0 ${isRohit ? 'text-[#F4C95D]' : 'text-[#fbcfe8]'}`} />
           <span>{toast.message}</span>
         </div>
       )}
@@ -453,21 +458,28 @@ export default function App() {
       {/* LEFT SIDEBAR - Fixed to Viewport per user specification */}
       <aside
         className={`sidebar sidebar-fixed w-full md:w-[317px] md:fixed md:top-0 md:left-0 md:h-screen md:overflow-y-auto md:z-[1000] flex flex-col shrink-0 ${
-          isSpecial
+          isRohit
             ? 'bg-[#FFFDF7] border-r-2 border-[#8EC5FF] shadow-[4px_0_24px_rgba(8,43,99,0.08)]'
-            : 'bg-white border-r border-slate-200/80'
+            : 'bg-[#FFFDF7] border-r-2 border-[#fbcfe8] shadow-[4px_0_24px_rgba(244,63,94,0.08)]'
         }`}
       >
         {/* Brand Header */}
         <div
-          className={`p-5 flex items-center justify-between ${
-            isSpecial
+          className={`p-5 flex items-center justify-between relative ${
+            isRohit
               ? 'border-b-2 border-[#8EC5FF]/60 bg-[#FFFDF7]'
-              : 'border-b border-slate-100 bg-white'
+              : 'border-b-2 border-[#fbcfe8]/70 bg-[#FFFDF7]'
           }`}
         >
+          {/* Decorative washi tape for Navya Sri */}
+          {!isRohit && (
+            <div className="absolute -top-1.5 left-8 z-10">
+              <WashiTape color="pink" angle={-2} className="w-20 h-3.5" />
+            </div>
+          )}
+
           <div className="flex items-center gap-3">
-            {isSpecial ? (
+            {isRohit ? (
               <>
                 <div className="relative flex items-center justify-center">
                   <Number45Sticker size="md" />
@@ -489,93 +501,126 @@ export default function App() {
                 </div>
               </>
             ) : (
-              <AppLogo size="md" showWordmark={true} subtitle="real-time workspace" />
+              /* Cute Pink Stationery Branding for Navya Sri */
+              <>
+                <div className="w-10 h-10 rounded-2xl bg-linear-to-br from-[#fff1f2] via-[#ffe4e6] to-[#fce7f3] border-2 border-[#fbcfe8] flex items-center justify-center shadow-xs">
+                  <FlowerDoodle className="w-6 h-6 text-[#f43f5e]" />
+                </div>
+                <div>
+                  <div className="flex items-center gap-1.5">
+                    <h2 className="text-base font-handwriting font-bold text-[#881337] tracking-wide leading-none">
+                      NAVYA'S PLANNER
+                    </h2>
+                    <HeartDoodle className="w-3.5 h-3.5" color="#f43f5e" />
+                  </div>
+                  <div className="flex items-center gap-1.5 mt-0.5">
+                    <SparkleDoodle className="w-3 h-3 text-[#f59e0b]" color="#f59e0b" />
+                    <span className="text-[11px] font-handwriting font-bold text-[#e11d48] tracking-wide">
+                      Plan • Smile • Bloom ✨
+                    </span>
+                  </div>
+                </div>
+              </>
             )}
           </div>
         </div>
 
         {/* Navigation Items */}
-        <nav className={`p-3.5 space-y-2 flex-1 ${isSpecial ? 'font-handwriting' : ''}`}>
-          <button
-            id="nav-planner-btn"
-            onClick={() => handleTabChange('planner')}
-            className={`w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs font-semibold transition-all cursor-pointer ${
-              activeTab === 'planner'
-                ? isSpecial
-                  ? 'bg-[#1769E0] text-white shadow-md shadow-blue-600/30 font-bold border border-[#082B63]'
-                  : 'bg-blue-600 text-white shadow-xs font-semibold'
-                : isSpecial
-                ? 'text-[#082B63] hover:bg-[#EAF4FF] hover:text-[#1769E0]'
-                : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900'
-            }`}
-          >
-            <div className="flex items-center gap-2.5">
-              <Calendar className="w-4 h-4" />
-              <span>Weekly Planner</span>
-            </div>
-            {isSpecial && (
-              <span className="text-[10px] px-1.5 py-0.5 rounded-md font-mono font-bold bg-[#F4C95D] text-[#082B63]">
-                45
-              </span>
-            )}
-          </button>
-
+        <nav className="p-3.5 space-y-2 flex-1 font-handwriting font-bold">
+          {/* Today's Dashboard tab (FIRST) */}
           <button
             id="nav-today-btn"
             onClick={() => handleTabChange('dashboard')}
-            className={`w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs font-semibold transition-all cursor-pointer ${
+            className={`w-full flex items-center justify-between px-3.5 py-2.5 rounded-2xl text-xs transition-all cursor-pointer ${
               activeTab === 'dashboard'
-                ? isSpecial
-                  ? 'bg-[#1769E0] text-white shadow-md shadow-blue-600/30 font-bold border border-[#082B63]'
-                  : 'bg-blue-600 text-white shadow-xs font-semibold'
-                : isSpecial
+                ? isRohit
+                  ? 'bg-[#1769E0] text-white shadow-md shadow-blue-600/30 border border-[#082B63]'
+                  : 'bg-[#f43f5e] text-white shadow-md shadow-rose-400/30 border border-[#be123c]'
+                : isRohit
                 ? 'text-[#082B63] hover:bg-[#EAF4FF] hover:text-[#1769E0]'
-                : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900'
+                : 'text-[#881337] hover:bg-[#fff1f2] hover:text-[#e11d48]'
             }`}
           >
             <div className="flex items-center gap-2.5">
               <CheckSquare className="w-4 h-4" />
               <span>Today's Dashboard</span>
             </div>
-            {isSpecial && <CricketBallDoodle className="w-3.5 h-3.5" />}
+            {isRohit ? (
+              <CricketBallDoodle className="w-3.5 h-3.5" />
+            ) : (
+              <SparkleDoodle className="w-3.5 h-3.5" color={activeTab === 'dashboard' ? '#ffffff' : '#f59e0b'} />
+            )}
           </button>
 
+          {/* Weekly Planner tab */}
+          <button
+            id="nav-planner-btn"
+            onClick={() => handleTabChange('planner')}
+            className={`w-full flex items-center justify-between px-3.5 py-2.5 rounded-2xl text-xs transition-all cursor-pointer ${
+              activeTab === 'planner'
+                ? isRohit
+                  ? 'bg-[#1769E0] text-white shadow-md shadow-blue-600/30 border border-[#082B63]'
+                  : 'bg-[#f43f5e] text-white shadow-md shadow-rose-400/30 border border-[#be123c]'
+                : isRohit
+                ? 'text-[#082B63] hover:bg-[#EAF4FF] hover:text-[#1769E0]'
+                : 'text-[#881337] hover:bg-[#fff1f2] hover:text-[#e11d48]'
+            }`}
+          >
+            <div className="flex items-center gap-2.5">
+              <Calendar className="w-4 h-4" />
+              <span>Weekly Planner</span>
+            </div>
+            {isRohit ? (
+              <span className="text-[10px] px-1.5 py-0.5 rounded-md font-mono font-bold bg-[#F4C95D] text-[#082B63]">
+                45
+              </span>
+            ) : (
+              <HeartDoodle className="w-3.5 h-3.5" color={activeTab === 'planner' ? '#ffffff' : '#f43f5e'} />
+            )}
+          </button>
+
+          {/* Analytics / Stats tab */}
           <button
             id="nav-analytics-btn"
             onClick={() => handleTabChange('analytics')}
-            className={`w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs font-semibold transition-all cursor-pointer ${
+            className={`w-full flex items-center justify-between px-3.5 py-2.5 rounded-2xl text-xs transition-all cursor-pointer ${
               activeTab === 'analytics'
-                ? isSpecial
-                  ? 'bg-[#1769E0] text-white shadow-md shadow-blue-600/30 font-bold border border-[#082B63]'
-                  : 'bg-blue-600 text-white shadow-xs font-semibold'
-                : isSpecial
+                ? isRohit
+                  ? 'bg-[#1769E0] text-white shadow-md shadow-blue-600/30 border border-[#082B63]'
+                  : 'bg-[#f43f5e] text-white shadow-md shadow-rose-400/30 border border-[#be123c]'
+                : isRohit
                 ? 'text-[#082B63] hover:bg-[#EAF4FF] hover:text-[#1769E0]'
-                : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900'
+                : 'text-[#881337] hover:bg-[#fff1f2] hover:text-[#e11d48]'
             }`}
           >
             <div className="flex items-center gap-2.5">
               <BarChart3 className="w-4 h-4" />
-              <span>Scoreboard & Stats</span>
+              <span>{isRohit ? 'Scoreboard & Stats' : 'Productivity & Stats ♡'}</span>
             </div>
-            {isSpecial && <TrophyDoodle className="w-3.5 h-3.5" />}
+            {isRohit ? (
+              <TrophyDoodle className="w-3.5 h-3.5" />
+            ) : (
+              <FlowerDoodle className="w-3.5 h-3.5" />
+            )}
           </button>
 
+          {/* Settings tab */}
           <button
             id="nav-settings-btn"
             onClick={() => handleTabChange('settings')}
-            className={`w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs font-semibold transition-all cursor-pointer ${
+            className={`w-full flex items-center justify-between px-3.5 py-2.5 rounded-2xl text-xs transition-all cursor-pointer ${
               activeTab === 'settings'
-                ? isSpecial
-                  ? 'bg-[#1769E0] text-white shadow-md shadow-blue-600/30 font-bold border border-[#082B63]'
-                  : 'bg-blue-600 text-white shadow-xs font-semibold'
-                : isSpecial
+                ? isRohit
+                  ? 'bg-[#1769E0] text-white shadow-md shadow-blue-600/30 border border-[#082B63]'
+                  : 'bg-[#f43f5e] text-white shadow-md shadow-rose-400/30 border border-[#be123c]'
+                : isRohit
                 ? 'text-[#082B63] hover:bg-[#EAF4FF] hover:text-[#1769E0]'
-                : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900'
+                : 'text-[#881337] hover:bg-[#fff1f2] hover:text-[#e11d48]'
             }`}
           >
             <div className="flex items-center gap-2.5">
               <SettingsIcon className="w-4 h-4" />
-              <span>Settings & Notifications</span>
+              <span>{isRohit ? 'Settings & Notifications' : 'Settings & Notes 💌'}</span>
             </div>
           </button>
         </nav>
@@ -589,39 +634,37 @@ export default function App() {
               setDefaultTaskDate(undefined);
               setIsTaskModalOpen(true);
             }}
-            className={`w-full flex items-center justify-center gap-2 py-2.5 px-3 rounded-xl text-xs font-semibold transition-all cursor-pointer hover:scale-105 active:scale-95 ${
-              isSpecial
-                ? 'bg-[#1769E0] hover:bg-[#082B63] text-white font-handwriting font-bold shadow-md shadow-blue-600/20 border border-[#082B63]'
-                : 'bg-blue-600 hover:bg-blue-700 text-white shadow-xs'
+            className={`w-full flex items-center justify-center gap-2 py-2.5 px-3 rounded-2xl text-xs transition-all cursor-pointer hover:scale-105 active:scale-95 font-handwriting font-bold ${
+              isRohit
+                ? 'bg-[#1769E0] hover:bg-[#082B63] text-white shadow-md shadow-blue-600/20 border border-[#082B63]'
+                : 'bg-linear-to-r from-[#f43f5e] to-[#e11d48] hover:from-[#e11d48] hover:to-[#be123c] text-white shadow-md shadow-rose-400/30 border border-[#be123c]'
             }`}
           >
             <Plus className="w-4 h-4" />
-            <span>{isSpecial ? '+ New Hitman Task' : 'Add Task'}</span>
+            <span>{isRohit ? '+ New Hitman Task' : '+ Add New Task ♡'}</span>
           </button>
         </div>
 
         {/* Current User & Logout Footer */}
         <div
           className={`p-4 ${
-            isSpecial
+            isRohit
               ? 'border-t-2 border-[#8EC5FF]/60 bg-[#FFFDF7]'
-              : 'border-t border-slate-100 bg-slate-50/50'
+              : 'border-t-2 border-[#fbcfe8]/70 bg-[#fff1f2]/40'
           }`}
         >
           <div className="flex items-center justify-between">
             <div className="min-w-0 pr-2">
               <p
-                className={`text-xs truncate ${
-                  isSpecial
-                    ? 'font-handwriting font-bold text-[#082B63]'
-                    : 'font-semibold text-slate-800'
+                className={`text-xs truncate font-handwriting font-bold ${
+                  isRohit ? 'text-[#082B63]' : 'text-[#881337]'
                 }`}
               >
                 {currentUser.name}
               </p>
               <p
-                className={`text-[11px] truncate ${
-                  isSpecial ? 'font-mono text-[#1769E0] font-medium' : 'text-slate-500'
+                className={`text-[11px] truncate font-mono font-medium ${
+                  isRohit ? 'text-[#1769E0]' : 'text-[#e11d48]'
                 }`}
               >
                 {currentUser.email}
@@ -630,7 +673,11 @@ export default function App() {
             <button
               id="logout-btn"
               onClick={handleLogout}
-              className="p-1.5 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors shrink-0 cursor-pointer"
+              className={`p-1.5 rounded-xl transition-colors shrink-0 cursor-pointer ${
+                isRohit
+                  ? 'text-slate-400 hover:text-red-600 hover:bg-red-50'
+                  : 'text-[#fda4af] hover:text-[#e11d48] hover:bg-[#ffe4e6]'
+              }`}
               title="Log out"
             >
               <LogOut className="w-4 h-4" />
@@ -644,9 +691,9 @@ export default function App() {
         {/* Top Header with Real-Time Socket Connection Indicator */}
         <header
           className={`h-14 px-4 sm:px-6 flex items-center justify-between shrink-0 ${
-            isSpecial
+            isRohit
               ? 'bg-[#FFFDF7]/90 backdrop-blur-md border-b-2 border-[#8EC5FF]/60'
-              : 'bg-white/80 backdrop-blur-md border-b border-slate-200/80'
+              : 'bg-[#FFFDF7]/90 backdrop-blur-md border-b-2 border-[#fbcfe8]/80'
           }`}
         >
           <div className="flex items-center gap-3">
@@ -654,26 +701,26 @@ export default function App() {
             <div
               className={`flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold border ${
                 isSocketConnected
-                  ? isSpecial
+                  ? isRohit
                     ? 'bg-blue-50/90 border-blue-200 text-[#082B63]'
-                    : 'bg-emerald-50/90 border-emerald-200 text-emerald-800'
+                    : 'bg-[#fff1f2] border-[#fecdd3] text-[#9f1239]'
                   : 'bg-amber-50/90 border-amber-200 text-amber-800'
               }`}
             >
               <Radio
                 className={`w-3.5 h-3.5 ${
                   isSocketConnected
-                    ? isSpecial
+                    ? isRohit
                       ? 'text-[#1769E0] animate-pulse'
-                      : 'text-emerald-600 animate-pulse'
+                      : 'text-[#f43f5e] animate-pulse'
                     : 'text-amber-600'
                 }`}
               />
-              <span>
+              <span className={!isRohit ? 'font-handwriting font-bold' : ''}>
                 {isSocketConnected
-                  ? isSpecial
+                  ? isRohit
                     ? 'Hitman 45 • Live Real-Time Synchronized'
-                    : 'Live Real-Time Synchronized'
+                    : 'Navya Sri • Live Real-Time Synchronized ♡ ✨'
                   : 'Reconnecting...'}
               </span>
             </div>
@@ -681,15 +728,15 @@ export default function App() {
 
           <div className="flex items-center gap-3">
             <span
-              className={`text-xs hidden sm:inline ${
-                isSpecial
-                  ? 'font-handwriting text-[#082B63] font-bold'
-                  : 'font-semibold text-slate-500'
+              className={`text-xs hidden sm:inline font-handwriting font-bold ${
+                isRohit
+                  ? 'text-[#082B63]'
+                  : 'text-[#881337]'
               }`}
             >
-              {isSpecial
+              {isRohit
                 ? 'Rohit Sharma Fan Edition • PostgreSQL Cloud SQL 💙'
-                : 'PostgreSQL Cloud SQL • SMTP Active'}
+                : 'Navya Sri Edition • Cute Pastel Stationery Art 🌸 ♡'}
             </span>
           </div>
         </header>
